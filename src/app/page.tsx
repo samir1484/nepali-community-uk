@@ -2,8 +2,9 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { NepalFlag } from "@/components/layout/NepalFlag";
-import { CultureGallery } from "@/components/home/CultureGallery";
+import { CultureShowcase } from "@/components/home/CultureShowcase";
 import { firstExistingPublicFile } from "@/lib/media";
+import { AnimatedSection, StaggerContainer, StaggerItem } from "@/components/animation/AnimatedSection";
 
 const HIGHLIGHTS = [
   {
@@ -108,29 +109,33 @@ export default function Home() {
       </section>
 
       <section className="mx-auto max-w-6xl px-4 py-16">
-        <h2 className="text-center text-2xl font-bold text-foreground">
-          Everything the community needs, in one place
-        </h2>
-        <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        <AnimatedSection>
+          <h2 className="text-center text-2xl font-bold text-foreground">
+            Everything the community needs, in one place
+          </h2>
+        </AnimatedSection>
+        <StaggerContainer className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {HIGHLIGHTS.map((item) => (
-            <Card key={item.title}>
-              <CardContent className="pt-6">
-                <h3 className="font-semibold text-foreground">{item.title}</h3>
-                <p className="mt-2 text-sm text-muted-foreground">{item.description}</p>
-              </CardContent>
-            </Card>
+            <StaggerItem key={item.title}>
+              <Card>
+                <CardContent className="pt-6">
+                  <h3 className="font-semibold text-foreground">{item.title}</h3>
+                  <p className="mt-2 text-sm text-muted-foreground">{item.description}</p>
+                </CardContent>
+              </Card>
+            </StaggerItem>
           ))}
-        </div>
+        </StaggerContainer>
         <p className="mt-6 text-center text-sm text-muted-foreground">
           These modules are launching soon — register now to be notified when they go
           live.
         </p>
       </section>
 
-      <CultureGallery />
+      <CultureShowcase />
 
       <section className="border-t bg-secondary/40">
-        <div className="mx-auto flex max-w-6xl flex-col items-center gap-6 px-4 py-16 text-center sm:flex-row sm:text-left">
+        <AnimatedSection className="mx-auto flex max-w-6xl flex-col items-center gap-6 px-4 py-16 text-center sm:flex-row sm:text-left">
           <div className="flex-1">
             <h2 className="text-2xl font-bold text-foreground">Meet our founder</h2>
             <p className="mt-2 text-muted-foreground">
@@ -143,7 +148,7 @@ export default function Home() {
             nativeButton={false}
             render={<Link href="/founder">Read the story</Link>}
           />
-        </div>
+        </AnimatedSection>
       </section>
     </div>
   );
