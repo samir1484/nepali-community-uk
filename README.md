@@ -1,36 +1,43 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Nepali Community UK
 
-## Getting Started
+Phase 1: project foundation — auth, branding, and core pages. See `.env.example` for
+required environment variables.
 
-First, run the development server:
+## Local development
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+This machine doesn't have Docker, so local Postgres is provided by Prisma's own
+built-in dev database instead of `docker-compose`.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+1. Start the local database (run once per reboot; it stays running in the background):
+   ```bash
+   npx prisma dev -d --name nepali-community-uk
+   ```
+   Copy the printed connection string into `DATABASE_URL` in `.env` if it's not already
+   set (see `npx prisma dev ls` to see the current server's URL again later).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+2. Start Mailpit (dev email inbox) if it isn't already running as a background service:
+   ```bash
+   mailpit
+   ```
+   View sent emails at http://localhost:8025.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+3. Apply the Prisma schema to the database:
+   ```bash
+   npx prisma db push
+   ```
+   (`db push` is used instead of `migrate dev` for now — the local Prisma dev database
+   doesn't yet support the shadow-database reset step `migrate dev` relies on. Switch to
+   `migrate dev` once `DATABASE_URL` points at a real Postgres instance, e.g. Supabase.)
 
-## Learn More
+4. Run the app:
+   ```bash
+   npm run dev
+   ```
 
-To learn more about Next.js, take a look at the following resources:
+## Going to production
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- Point `DATABASE_URL` at a real Postgres instance (e.g. a Supabase project) and run
+  `npx prisma migrate deploy`.
+- Set `EMAIL_PROVIDER=resend` and `RESEND_API_KEY` to send real email.
+- Set `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` to enable Google sign-in.
+- Set a strong `NEXTAUTH_SECRET`.
