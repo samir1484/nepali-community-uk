@@ -134,3 +134,31 @@
     @apply font-sans;
   }
 }
+
+@keyframes flag-wave {
+  0%,
+  100% {
+    transform: perspective(300px) rotateY(0deg) skewY(0deg);
+  }
+  25% {
+    transform: perspective(300px) rotateY(-6deg) skewY(1.5deg);
+  }
+  50% {
+    transform: perspective(300px) rotateY(2deg) skewY(-1deg);
+  }
+  75% {
+    transform: perspective(300px) rotateY(-3deg) skewY(1deg);
+  }
+}
+
+.animate-flag-wave {
+  transform-origin: left center;
+  animation: flag-wave 3.2s ease-in-out infinite;
+  will-change: transform;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-flag-wave {
+    animation: none;
+  }
+}
