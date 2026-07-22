@@ -35,6 +35,10 @@ export default function Home() {
     "images/hero/hero-bg.png",
     "images/hero/hero-bg.webp",
   ]);
+  const flagGif = firstExistingPublicFile([
+    "images/hero/flag.gif",
+    "images/hero/flag.webp",
+  ]);
 
   return (
     <div>
@@ -87,9 +91,18 @@ export default function Home() {
           </div>
 
           <div className="flex justify-center sm:justify-end">
-            <div style={{ perspective: "300px" }}>
-              <NepalFlag className="h-48 w-40 drop-shadow-xl sm:h-64 sm:w-52" />
-            </div>
+            {flagGif ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={`/${flagGif}`}
+                alt="Flag of Nepal"
+                className="h-48 w-40 object-contain drop-shadow-xl sm:h-64 sm:w-52"
+              />
+            ) : (
+              <div style={{ perspective: "300px" }}>
+                <NepalFlag className="h-48 w-40 drop-shadow-xl sm:h-64 sm:w-52" />
+              </div>
+            )}
           </div>
         </div>
       </section>

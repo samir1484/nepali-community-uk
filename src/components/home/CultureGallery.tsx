@@ -1,7 +1,7 @@
 import Image from "next/image";
 import { firstExistingPublicFile } from "@/lib/media";
 
-const EXTENSIONS = ["jpg", "jpeg", "png", "webp"];
+const EXTENSIONS = ["jpg", "jpeg", "png", "webp", "gif"];
 
 const CULTURE_ITEMS = [
   {
@@ -24,6 +24,16 @@ const CULTURE_ITEMS = [
     title: "Festivals & Tradition",
     caption: "From Dashain to Tihar, celebrations that bring the community together.",
   },
+  {
+    slug: "temple",
+    title: "Sacred Temples",
+    caption: "Pashupatinath and countless other temples anchor Nepal's spiritual life.",
+  },
+  {
+    slug: "tradition",
+    title: "Living Culture",
+    caption: "Traditions like the Kumari carry Nepal's heritage into every generation.",
+  },
 ] as const;
 
 function candidatePaths(slug: string) {
@@ -40,7 +50,7 @@ export function CultureGallery() {
         Celebrating the mountains, traditions, and spirit that connect us.
       </p>
 
-      <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {CULTURE_ITEMS.map((item) => {
           const found = firstExistingPublicFile(candidatePaths(item.slug));
 
