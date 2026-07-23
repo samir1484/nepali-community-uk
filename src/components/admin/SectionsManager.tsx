@@ -233,38 +233,45 @@ export function SectionsManager({ sections }: { sections: HomeSection[] }) {
         <Button onClick={startCreate}>Add section</Button>
       )}
 
-      <div className="space-y-3">
-        {sorted.length === 0 && (
-          <p className="text-sm text-muted-foreground">No sections yet.</p>
-        )}
-        {sorted.map((section) => (
-          <Card key={section.id}>
-            <CardContent className="flex items-center justify-between gap-4 pt-6">
-              <div className="min-w-0">
-                <div className="flex items-center gap-2">
-                  <Badge variant={section.type === "SHOWCASE" ? "default" : "secondary"}>
-                    {section.type}
-                  </Badge>
-                  {!section.isActive && <Badge variant="outline">Hidden</Badge>}
-                  <span className="text-xs text-muted-foreground">order {section.order}</span>
-                </div>
-                <p className="mt-1 truncate font-medium text-foreground">{section.title}</p>
-                {section.caption && (
-                  <p className="truncate text-sm text-muted-foreground">{section.caption}</p>
-                )}
-              </div>
-              <div className="flex shrink-0 gap-2">
-                <Button size="sm" variant="outline" onClick={() => startEdit(section)}>
-                  Edit
-                </Button>
-                <Button size="sm" variant="destructive" onClick={() => remove(section)}>
-                  Delete
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
+      {sorted.length === 0 ? (
+        <p className="text-sm text-muted-foreground">No sections yet.</p>
+      ) : (
+        SECTION_TYPES.map((type) => {
+          const group = sorted.filter((s) => s.type === type);
+          if (group.length === 0) return null;
+          return (
+            <div key={type} className="space-y-3">
+              <h2 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">
+                {TYPE_LABELS[type]}
+              </h2>
+              {group.map((section) => (
+                <Card key={section.id}>
+                  <CardContent className="flex items-center justify-between gap-4 pt-6">
+                    <div className="min-w-0">
+                      <div className="flex items-center gap-2">
+                        {!section.isActive && <Badge variant="outline">Hidden</Badge>}
+                        <span className="text-xs text-muted-foreground">order {section.order}</span>
+                      </div>
+                      <p className="mt-1 truncate font-medium text-foreground">{section.title}</p>
+                      {section.caption && (
+                        <p className="truncate text-sm text-muted-foreground">{section.caption}</p>
+                      )}
+                    </div>
+                    <div className="flex shrink-0 gap-2">
+                      <Button size="sm" variant="outline" onClick={() => startEdit(section)}>
+                        Edit
+                      </Button>
+                      <Button size="sm" variant="destructive" onClick={() => remove(section)}>
+                        Delete
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          );
+        })
+      )}
     </div>
   );
 }
