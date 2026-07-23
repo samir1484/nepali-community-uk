@@ -15,18 +15,22 @@ const HIGHLIGHTS = [
   {
     title: "Jobs & Careers",
     caption: "Find and post job opportunities within the community.",
+    linkUrl: "/jobs",
   },
   {
     title: "Rooms & Housing",
     caption: "Browse room listings shared by fellow community members.",
+    linkUrl: "/rooms",
   },
   {
     title: "Events & Festivals",
     caption: "Stay up to date with Nepali cultural events across the UK.",
+    linkUrl: "/events",
   },
   {
     title: "Business Directory",
     caption: "Discover and support Nepali-owned businesses.",
+    linkUrl: "/businesses",
   },
 ];
 
@@ -83,9 +87,9 @@ async function main() {
     for (let i = 0; i < HIGHLIGHTS.length; i++) {
       const item = HIGHLIGHTS[i];
       await client.query(
-        `INSERT INTO home_sections (id, type, title, caption, "order", "isActive", "createdAt", "updatedAt")
-         VALUES ($1, 'HIGHLIGHT', $2, $3, $4, true, now(), now())`,
-        [randomUUID(), item.title, item.caption, i]
+        `INSERT INTO home_sections (id, type, title, caption, "linkUrl", "order", "isActive", "createdAt", "updatedAt")
+         VALUES ($1, 'HIGHLIGHT', $2, $3, $4, $5, true, now(), now())`,
+        [randomUUID(), item.title, item.caption, item.linkUrl, i]
       );
     }
     for (let i = 0; i < SHOWCASE.length; i++) {
