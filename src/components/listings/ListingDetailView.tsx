@@ -2,8 +2,8 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { db } from "@/lib/db";
-import { formatListingDetailRows } from "@/lib/listings";
-import { typeLabel, typeToPath, type ListingTypeValue } from "@/lib/validation/listings";
+import { formatListingDetailRows, mapsEmbedUrl, mapsSearchUrl } from "@/lib/listings";
+import { typePluralLabel, typeToPath, type ListingTypeValue } from "@/lib/validation/listings";
 
 export async function ListingDetailView({ type, id }: { type: ListingTypeValue; id: string }) {
   const listing = await db.listing.findUnique({
@@ -20,7 +20,7 @@ export async function ListingDetailView({ type, id }: { type: ListingTypeValue; 
   return (
     <div className="mx-auto max-w-2xl px-4 py-16">
       <Link href={`/${typeToPath(type)}`} className="text-sm text-primary underline underline-offset-4">
-        ← Back to {typeLabel(type).toLowerCase()}s
+        ← Back to {typePluralLabel(type)}
       </Link>
 
       <h1 className="mt-4 text-3xl font-bold text-foreground">{listing.title}</h1>
@@ -44,12 +44,49 @@ export async function ListingDetailView({ type, id }: { type: ListingTypeValue; 
             <dt className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
               {row.label}
             </dt>
-            <dd className="mt-0.5 text-foreground">{row.value}</dd>
+            <dd className="mt-0.5 text-foreground">
+              {row.href ? (
+                <a
+                  href={row.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-primary underline underline-offset-4"
+                >
+                  {row.value}
+                </a>
+              ) : (
+                row.value
+              )}
+            </dd>
           </div>
         ))}
       </dl>
 
       <div className="mt-6 whitespace-pre-wrap text-foreground">{listing.description}</div>
+
+      {type === "BUSINESS" && (
+        <div className="mt-6">
+          <h2 className="text-sm font-medium uppercase tracking-wide text-muted-foreground">
+            Find us
+          </h2>
+          <div className="mt-2 overflow-hidden rounded-lg border">
+            <iframe
+              src={mapsEmbedUrl(listing.location)}
+              className="h-64 w-full"
+              loading="lazy"
+              title={`Map showing ${listing.location}`}
+            />
+          </div>
+          <a
+            href={mapsSearchUrl(listing.location)}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-2 inline-block text-sm text-primary underline underline-offset-4"
+          >
+            View larger map
+          </a>
+        </div>
+      )}
     </div>
   );
 }

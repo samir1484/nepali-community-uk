@@ -4,6 +4,7 @@ import type {
   RoomDetails,
   EventDetails,
   VolunteerDetails,
+  BusinessDetails,
 } from "@/lib/validation/listings";
 
 const JOB_TYPE_LABELS: Record<string, string> = {
@@ -40,13 +41,17 @@ export function formatListingTeaser(type: ListingTypeValue, details: unknown): s
       const d = details as VolunteerDetails;
       return [d.organization, d.commitment].filter(Boolean).join(" · ");
     }
+    case "BUSINESS": {
+      const d = details as BusinessDetails;
+      return d.services;
+    }
   }
 }
 
 export function formatListingDetailRows(
   type: ListingTypeValue,
   details: unknown
-): { label: string; value: string }[] {
+): { label: string; value: string; href?: string }[] {
   switch (type) {
     case "JOB": {
       const d = details as JobDetails;
@@ -80,7 +85,24 @@ export function formatListingDetailRows(
         { label: "Time commitment", value: d.commitment },
       ];
     }
+    case "BUSINESS": {
+      const d = details as BusinessDetails;
+      return [
+        { label: "Services", value: d.services },
+        ...(d.websiteUrl ? [{ label: "Website", value: d.websiteUrl, href: d.websiteUrl }] : []),
+      ];
+    }
   }
+}
+
+/** Google Maps embed URL for an address, using no-API-key iframe embed mode. */
+export function mapsEmbedUrl(location: string): string {
+  return `https://maps.google.com/maps?q=${encodeURIComponent(location)}&output=embed`;
+}
+
+/** Google Maps search link for an address, for a "view larger map" link. */
+export function mapsSearchUrl(location: string): string {
+  return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(location)}`;
 }
 
 function formatDate(value: string): string {

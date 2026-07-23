@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const LISTING_TYPES = ["JOB", "ROOM", "EVENT", "VOLUNTEER"] as const;
+export const LISTING_TYPES = ["JOB", "ROOM", "EVENT", "VOLUNTEER", "BUSINESS"] as const;
 export type ListingTypeValue = (typeof LISTING_TYPES)[number];
 
 export const JOB_TYPES = ["FULL_TIME", "PART_TIME", "CONTRACT", "TEMPORARY", "INTERNSHIP"] as const;
@@ -38,6 +38,16 @@ export const volunteerDetailsSchema = z.object({
   commitment: z.string().trim().min(1, "Time commitment is required"),
 });
 
+export const businessDetailsSchema = z.object({
+  services: z.string().trim().min(1, "Describe the services offered"),
+  websiteUrl: z
+    .string()
+    .trim()
+    .refine((v) => v === "" || /^https?:\/\/.+\..+/.test(v), "Enter a valid URL (starting with http:// or https://)")
+    .optional()
+    .or(z.literal("")),
+});
+
 export function detailsSchemaFor(type: ListingTypeValue) {
   switch (type) {
     case "JOB":
@@ -48,6 +58,8 @@ export function detailsSchemaFor(type: ListingTypeValue) {
       return eventDetailsSchema;
     case "VOLUNTEER":
       return volunteerDetailsSchema;
+    case "BUSINESS":
+      return businessDetailsSchema;
   }
 }
 
@@ -55,12 +67,14 @@ export type JobDetails = z.infer<typeof jobDetailsSchema>;
 export type RoomDetails = z.infer<typeof roomDetailsSchema>;
 export type EventDetails = z.infer<typeof eventDetailsSchema>;
 export type VolunteerDetails = z.infer<typeof volunteerDetailsSchema>;
+export type BusinessDetails = z.infer<typeof businessDetailsSchema>;
 
 const TYPE_PATHS: Record<ListingTypeValue, string> = {
   JOB: "jobs",
   ROOM: "rooms",
   EVENT: "events",
   VOLUNTEER: "volunteer",
+  BUSINESS: "businesses",
 };
 
 export function typeToPath(type: ListingTypeValue): string {
@@ -72,8 +86,21 @@ const TYPE_LABELS: Record<ListingTypeValue, string> = {
   ROOM: "Room",
   EVENT: "Event",
   VOLUNTEER: "Volunteer opportunity",
+  BUSINESS: "Business",
 };
 
 export function typeLabel(type: ListingTypeValue): string {
   return TYPE_LABELS[type];
+}
+
+const TYPE_PLURAL_LABELS: Record<ListingTypeValue, string> = {
+  JOB: "jobs",
+  ROOM: "rooms",
+  EVENT: "events",
+  VOLUNTEER: "volunteer opportunities",
+  BUSINESS: "businesses",
+};
+
+export function typePluralLabel(type: ListingTypeValue): string {
+  return TYPE_PLURAL_LABELS[type];
 }

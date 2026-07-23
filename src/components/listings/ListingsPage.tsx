@@ -27,6 +27,11 @@ const TITLES: Record<ListingTypeValue, { heading: string; headingNp: string; des
     headingNp: np.volunteerHeading,
     description: "Give back to the community through local volunteer opportunities.",
   },
+  BUSINESS: {
+    heading: "Business Directory",
+    headingNp: np.businessHeading,
+    description: "Discover and support Nepali-owned businesses across the UK.",
+  },
 };
 
 export async function ListingsPage({

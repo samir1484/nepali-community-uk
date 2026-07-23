@@ -49,6 +49,11 @@ function extractDetails(type: ListingTypeValue, formData: FormData): Record<stri
         organization: formData.get("organization"),
         commitment: formData.get("commitment"),
       };
+    case "BUSINESS":
+      return {
+        services: formData.get("services"),
+        websiteUrl: formData.get("websiteUrl"),
+      };
   }
 }
 

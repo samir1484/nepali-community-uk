@@ -7,15 +7,10 @@ const COMMUNITY_LINKS = [
   { href: "/rooms", label: "Rooms & Housing", labelNp: np.roomsHousing },
   { href: "/events", label: "Events", labelNp: np.events },
   { href: "/volunteer", label: "Volunteer", labelNp: np.volunteer },
+  { href: "/businesses", label: "Business Directory", labelNp: np.business },
 ];
 
-const COMING_SOON = [
-  "Blogs",
-  "Community News",
-  "Business Directory",
-  "Immigration Resources",
-  "Student Support",
-];
+const COMING_SOON = ["Blogs", "Community News", "Immigration Resources", "Student Support"];
 
 export function Footer() {
   return (

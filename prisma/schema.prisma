@@ -140,6 +140,7 @@ enum ListingType {
   ROOM
   EVENT
   VOLUNTEER
+  BUSINESS
 }
 
 enum ModerationStatus {

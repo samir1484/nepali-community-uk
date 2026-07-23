@@ -79,8 +79,18 @@ export function ListingForm({ type }: { type: ListingTypeValue }) {
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="location">Location</Label>
-        <Input id="location" name="location" placeholder="e.g. London" required />
+        <Label htmlFor="location">{type === "BUSINESS" ? "Address" : "Location"}</Label>
+        <Input
+          id="location"
+          name="location"
+          placeholder={type === "BUSINESS" ? "e.g. 12 Oxford Road, Manchester, M1 5QA" : "e.g. London"}
+          required
+        />
+        {type === "BUSINESS" && (
+          <p className="text-xs text-muted-foreground">
+            Used to show a map on your business page — a full address works best.
+          </p>
+        )}
         <FieldError errors={state.fieldErrors?.location} />
       </div>
 
@@ -195,6 +205,21 @@ export function ListingForm({ type }: { type: ListingTypeValue }) {
             <Label htmlFor="commitment">Time commitment</Label>
             <Input id="commitment" name="commitment" placeholder="e.g. 2 hours/week" required />
             <FieldError errors={state.fieldErrors?.commitment} />
+          </div>
+        </>
+      )}
+
+      {type === "BUSINESS" && (
+        <>
+          <div className="space-y-2">
+            <Label htmlFor="services">Services</Label>
+            <Input id="services" name="services" placeholder="e.g. Restaurant, Catering, Event Planning" required />
+            <FieldError errors={state.fieldErrors?.services} />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="websiteUrl">Website (optional)</Label>
+            <Input id="websiteUrl" name="websiteUrl" type="url" placeholder="https://" />
+            <FieldError errors={state.fieldErrors?.websiteUrl} />
           </div>
         </>
       )}

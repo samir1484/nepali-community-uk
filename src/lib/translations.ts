@@ -6,6 +6,7 @@ export const np = {
   rooms: "कोठा",
   events: "कार्यक्रम",
   volunteer: "स्वयंसेवा",
+  business: "व्यापार निर्देशिका",
   about: "बारेमा",
   contact: "सम्पर्क",
   founder: "संस्थापक",
@@ -21,4 +22,5 @@ export const np = {
   roomsHeading: "कोठा तथा आवास",
   eventsHeading: "कार्यक्रमहरू",
   volunteerHeading: "स्वयंसेवा अवसरहरू",
+  businessHeading: "व्यापार निर्देशिका",
 } as const;

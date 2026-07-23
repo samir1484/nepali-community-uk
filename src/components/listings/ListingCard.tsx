@@ -2,7 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { Card, CardContent } from "@/components/ui/card";
 import { formatListingTeaser } from "@/lib/listings";
-import type { ListingTypeValue } from "@/lib/validation/listings";
+import { typeToPath, type ListingTypeValue } from "@/lib/validation/listings";
 
 export function ListingCard({
   id,
@@ -21,7 +21,7 @@ export function ListingCard({
   images: string[];
   createdAt: Date;
 }) {
-  const path = type === "JOB" ? "jobs" : type === "ROOM" ? "rooms" : type === "EVENT" ? "events" : "volunteer";
+  const path = typeToPath(type);
 
   return (
     <Link href={`/${path}/${id}`}>
