@@ -9,7 +9,7 @@ const transporter = nodemailer.createTransport({
 
 export async function sendViaSmtp(input: SendEmailInput) {
   await transporter.sendMail({
-    from: process.env.SMTP_FROM ?? "Nepali Community UK <no-reply@nepalicommunity.uk>",
+    from: process.env.SMTP_FROM ?? "Nepali Community UK <no-reply@nepalicommunityuk.co.uk>",
     to: input.to,
     subject: input.subject,
     html: input.html,

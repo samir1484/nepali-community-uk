@@ -15,7 +15,7 @@ function getClient() {
 
 export async function sendViaResend(input: SendEmailInput) {
   await getClient().emails.send({
-    from: process.env.SMTP_FROM ?? "Nepali Community UK <no-reply@nepalicommunity.uk>",
+    from: process.env.SMTP_FROM ?? "Nepali Community UK <no-reply@nepalicommunityuk.co.uk>",
     to: input.to,
     subject: input.subject,
     html: input.html,
