@@ -14,8 +14,16 @@ const COMING_SOON = ["Blogs", "Community News", "Immigration Resources", "Studen
 
 export function Footer() {
   return (
-    <footer className="border-t bg-secondary text-secondary-foreground">
-      <div className="mx-auto max-w-6xl px-4 py-12">
+    <footer className="relative overflow-hidden border-t bg-secondary text-secondary-foreground">
+      <Image
+        src="/images/footer/flags.jpg"
+        alt=""
+        fill
+        className="object-cover"
+        sizes="100vw"
+      />
+      <div className="absolute inset-0 bg-secondary/85" aria-hidden="true" />
+      <div className="relative mx-auto max-w-6xl px-4 py-12">
         <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
           <div>
             <div className="flex items-center gap-2">
