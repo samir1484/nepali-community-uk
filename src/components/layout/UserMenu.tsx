@@ -25,6 +25,7 @@ export function UserMenu() {
       <span className="hidden text-sm text-muted-foreground sm:inline">
         {session.user?.name}
       </span>
+      <Button variant="ghost" nativeButton={false} render={<Link href="/account">My account</Link>} />
       <Button variant="outline" onClick={() => signOut({ callbackUrl: "/" })}>
         Log out
       </Button>
