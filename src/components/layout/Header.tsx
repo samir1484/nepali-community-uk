@@ -1,14 +1,15 @@
 import Link from "next/link";
 import Image from "next/image";
 import { UserMenu } from "./UserMenu";
+import { np } from "@/lib/translations";
 
 const NAV_LINKS = [
-  { href: "/jobs", label: "Jobs" },
-  { href: "/rooms", label: "Rooms" },
-  { href: "/events", label: "Events" },
-  { href: "/volunteer", label: "Volunteer" },
-  { href: "/about", label: "About" },
-  { href: "/contact", label: "Contact" },
+  { href: "/jobs", label: "Jobs", labelNp: np.jobs },
+  { href: "/rooms", label: "Rooms", labelNp: np.rooms },
+  { href: "/events", label: "Events", labelNp: np.events },
+  { href: "/volunteer", label: "Volunteer", labelNp: np.volunteer },
+  { href: "/about", label: "About", labelNp: np.about },
+  { href: "/contact", label: "Contact", labelNp: np.contact },
 ];
 
 export function Header() {
@@ -27,7 +28,7 @@ export function Header() {
               href={link.href}
               className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
             >
-              {link.label}
+              {link.label} <span className="font-nepali text-xs">{link.labelNp}</span>
             </Link>
           ))}
         </nav>

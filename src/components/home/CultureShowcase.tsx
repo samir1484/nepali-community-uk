@@ -1,5 +1,6 @@
 import type { HomeSection } from "@/generated/prisma/client";
 import { AnimatedSection, ParallaxImage } from "@/components/animation/AnimatedSection";
+import { np } from "@/lib/translations";
 
 export function CultureShowcase({ sections }: { sections: HomeSection[] }) {
   if (sections.length === 0) return null;
@@ -8,6 +9,7 @@ export function CultureShowcase({ sections }: { sections: HomeSection[] }) {
     <section className="py-16">
       <div className="mx-auto max-w-6xl px-4 text-center">
         <h2 className="text-2xl font-bold text-foreground">Nepali Heritage &amp; Culture</h2>
+        <p className="font-nepali mt-1 text-muted-foreground">{np.heritageCulture}</p>
         <p className="mx-auto mt-2 max-w-2xl text-muted-foreground">
           Celebrating the mountains, traditions, and spirit that connect us.
         </p>

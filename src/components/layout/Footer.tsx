@@ -1,11 +1,12 @@
 import Link from "next/link";
 import Image from "next/image";
+import { np } from "@/lib/translations";
 
 const COMMUNITY_LINKS = [
-  { href: "/jobs", label: "Jobs" },
-  { href: "/rooms", label: "Rooms & Housing" },
-  { href: "/events", label: "Events" },
-  { href: "/volunteer", label: "Volunteer" },
+  { href: "/jobs", label: "Jobs", labelNp: np.jobs },
+  { href: "/rooms", label: "Rooms & Housing", labelNp: np.roomsHousing },
+  { href: "/events", label: "Events", labelNp: np.events },
+  { href: "/volunteer", label: "Volunteer", labelNp: np.volunteer },
 ];
 
 const COMING_SOON = [
@@ -36,17 +37,17 @@ export function Footer() {
             <ul className="mt-3 space-y-2 text-sm">
               <li>
                 <Link href="/about" className="hover:underline">
-                  About
+                  About <span className="font-nepali text-xs text-secondary-foreground/70">{np.about}</span>
                 </Link>
               </li>
               <li>
                 <Link href="/founder" className="hover:underline">
-                  Founder
+                  Founder <span className="font-nepali text-xs text-secondary-foreground/70">{np.founder}</span>
                 </Link>
               </li>
               <li>
                 <Link href="/contact" className="hover:underline">
-                  Contact
+                  Contact <span className="font-nepali text-xs text-secondary-foreground/70">{np.contact}</span>
                 </Link>
               </li>
             </ul>
@@ -58,7 +59,8 @@ export function Footer() {
               {COMMUNITY_LINKS.map((link) => (
                 <li key={link.href}>
                   <Link href={link.href} className="hover:underline">
-                    {link.label}
+                    {link.label}{" "}
+                    <span className="font-nepali text-xs text-secondary-foreground/70">{link.labelNp}</span>
                   </Link>
                 </li>
               ))}

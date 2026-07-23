@@ -6,6 +6,7 @@ import { CultureShowcase } from "@/components/home/CultureShowcase";
 import { firstExistingPublicFile } from "@/lib/media";
 import { db } from "@/lib/db";
 import { AnimatedSection, StaggerContainer, StaggerItem } from "@/components/animation/AnimatedSection";
+import { np } from "@/lib/translations";
 
 export default async function Home() {
   const allSections = await db.homeSection.findMany({
@@ -61,6 +62,9 @@ export default async function Home() {
             <h1 className="max-w-xl text-4xl font-bold tracking-tight text-foreground sm:text-5xl">
               The UK&apos;s largest digital platform for the Nepali community
             </h1>
+            <p className="font-nepali mt-2 max-w-xl text-lg text-muted-foreground">
+              {np.heroHeadline}
+            </p>
             <p className="mt-4 max-w-xl text-lg text-muted-foreground">
               Connect with jobs, housing, events, news, and businesses built by and for
               the Nepali community across the United Kingdom.
@@ -102,6 +106,9 @@ export default async function Home() {
           <h2 className="text-center text-2xl font-bold text-foreground">
             Everything the community needs, in one place
           </h2>
+          <p className="font-nepali mt-1 text-center text-muted-foreground">
+            {np.everythingNeeds}
+          </p>
         </AnimatedSection>
         <StaggerContainer className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {highlightSections.map((item) => (
@@ -129,6 +136,7 @@ export default async function Home() {
         <AnimatedSection className="mx-auto flex max-w-6xl flex-col items-center gap-6 px-4 py-16 text-center sm:flex-row sm:text-left">
           <div className="flex-1">
             <h2 className="text-2xl font-bold text-foreground">Meet our founder</h2>
+            <p className="font-nepali mt-1 text-muted-foreground">{np.meetFounder}</p>
             <p className="mt-2 text-muted-foreground">
               Nepali Community UK was founded by Samir Khatiwada to bring the Nepali
               diaspora across the UK closer together.
