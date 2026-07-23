@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { PennantMotif } from "./PennantMotif";
+import Image from "next/image";
 import { UserMenu } from "./UserMenu";
 
 const NAV_LINKS = [
@@ -16,7 +16,7 @@ export function Header() {
     <header className="sticky top-0 z-40 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80">
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4">
         <Link href="/" className="flex items-center gap-2">
-          <PennantMotif className="h-8 w-16" />
+          <Image src="/logo.png" alt="Nepali Community UK" width={40} height={40} className="h-10 w-10" priority />
           <span className="text-lg font-bold text-foreground">Nepali Community UK</span>
         </Link>
 

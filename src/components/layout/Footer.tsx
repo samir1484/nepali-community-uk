@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { PennantMotif } from "./PennantMotif";
+import Image from "next/image";
 
 const COMMUNITY_LINKS = [
   { href: "/jobs", label: "Jobs" },
@@ -23,7 +23,7 @@ export function Footer() {
         <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
           <div>
             <div className="flex items-center gap-2">
-              <PennantMotif className="h-6 w-12" />
+              <Image src="/logo.png" alt="Nepali Community UK" width={32} height={32} className="h-8 w-8" />
               <span className="font-bold">Nepali Community UK</span>
             </div>
             <p className="mt-3 text-sm text-secondary-foreground/80">
