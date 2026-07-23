@@ -60,5 +60,15 @@ export async function contactListingPoster(
     replyTo: parsed.data.email,
   });
 
+  await db.contactMessage.create({
+    data: {
+      source: "LISTING_INQUIRY",
+      name: parsed.data.name,
+      email: parsed.data.email,
+      messageBody: parsed.data.message,
+      listingId: listing.id,
+    },
+  });
+
   return { success: true, message: "Your message has been sent. They'll be in touch soon." };
 }

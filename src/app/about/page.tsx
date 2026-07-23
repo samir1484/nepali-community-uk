@@ -1,14 +1,17 @@
 import type { Metadata } from "next";
 import { PageBackground } from "@/components/layout/PageBackground";
+import { getSiteImage } from "@/lib/settings";
 
 export const metadata: Metadata = {
   title: "About | Nepali Community UK",
   description: "Learn about the mission behind Nepali Community UK.",
 };
 
-export default function AboutPage() {
+export default async function AboutPage() {
+  const backgroundImage = await getSiteImage("page.about.image", "/images/culture/mountains.jpg");
+
   return (
-    <PageBackground image="/images/culture/mountains.jpg">
+    <PageBackground image={backgroundImage}>
       <div className="mx-auto max-w-3xl px-4 py-16">
         <h1 className="text-3xl font-bold text-foreground sm:text-4xl">
           About Nepali Community UK

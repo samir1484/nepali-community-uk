@@ -3,9 +3,10 @@ import { db } from "@/lib/db";
 import { Button } from "@/components/ui/button";
 import { ListingCard } from "@/components/listings/ListingCard";
 import { LocationFilter } from "@/components/listings/LocationFilter";
-import { typeLabel, typeToPath, typeBackgroundImage, type ListingTypeValue } from "@/lib/validation/listings";
+import { typeLabel, typeToPath, type ListingTypeValue } from "@/lib/validation/listings";
 import { np } from "@/lib/translations";
 import { PageBackground } from "@/components/layout/PageBackground";
+import { getListingBackground } from "@/lib/settings";
 
 const TITLES: Record<ListingTypeValue, { heading: string; headingNp: string; description: string }> = {
   JOB: {
@@ -56,9 +57,10 @@ export async function ListingsPage({
   });
 
   const { heading, headingNp, description } = TITLES[type];
+  const backgroundImage = await getListingBackground(type);
 
   return (
-    <PageBackground image={typeBackgroundImage(type)}>
+    <PageBackground image={backgroundImage}>
     <div className="mx-auto max-w-6xl px-4 py-16">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>

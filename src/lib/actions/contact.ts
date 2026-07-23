@@ -1,6 +1,7 @@
 "use server";
 
 import { z } from "zod";
+import { db } from "@/lib/db";
 import { sendEmail } from "@/lib/email/mailer";
 import { contactMessageTemplate } from "@/lib/email/templates/contact";
 
@@ -38,6 +39,15 @@ export async function sendContactMessage(
   const { subject, html } = contactMessageTemplate(parsed.data);
 
   await sendEmail({ to: receiver, subject, html });
+
+  await db.contactMessage.create({
+    data: {
+      source: "CONTACT_FORM",
+      name: parsed.data.name,
+      email: parsed.data.email,
+      messageBody: parsed.data.message,
+    },
+  });
 
   return { success: true, message: "Thanks for reaching out — we'll get back to you soon." };
 }

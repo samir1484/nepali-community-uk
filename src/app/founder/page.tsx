@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { db } from "@/lib/db";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { PageBackground } from "@/components/layout/PageBackground";
+import { getSiteImage } from "@/lib/settings";
 
 export const metadata: Metadata = {
   title: "Founder | Nepali Community UK",
@@ -19,9 +20,10 @@ async function getFounderImageUrl(): Promise<string | null> {
 
 export default async function FounderPage() {
   const imageUrl = await getFounderImageUrl();
+  const backgroundImage = await getSiteImage("page.founder.background", "/images/culture/tradition.jpg");
 
   return (
-    <PageBackground image="/images/culture/tradition.jpg">
+    <PageBackground image={backgroundImage}>
       <div className="mx-auto max-w-3xl px-4 py-16">
         <div className="flex flex-col items-center gap-6 text-center sm:flex-row sm:text-left">
           <Avatar className="h-32 w-32">

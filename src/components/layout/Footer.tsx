@@ -1,5 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
+import { ExternalLink } from "lucide-react";
+import { db } from "@/lib/db";
 import { np } from "@/lib/translations";
 
 const COMMUNITY_LINKS = [
@@ -12,7 +14,12 @@ const COMMUNITY_LINKS = [
 
 const COMING_SOON = ["Blogs", "Community News", "Immigration Resources", "Student Support"];
 
-export function Footer() {
+export async function Footer() {
+  const socialLinks = await db.socialLink.findMany({
+    where: { isActive: true },
+    orderBy: { order: "asc" },
+  });
+
   return (
     <footer className="relative overflow-hidden border-t bg-secondary text-secondary-foreground">
       <Image
@@ -80,7 +87,28 @@ export function Footer() {
           </div>
         </div>
 
-        <div className="mt-10 border-t border-secondary-foreground/20 pt-6 text-xs text-secondary-foreground/70">
+        {socialLinks.length > 0 && (
+          <div className="mt-10 flex flex-wrap gap-3 border-t border-secondary-foreground/20 pt-6">
+            {socialLinks.map((link) => (
+              <a
+                key={link.id}
+                href={link.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1.5 rounded-full border border-secondary-foreground/30 px-3 py-1.5 text-xs font-medium transition-all duration-300 hover:bg-secondary-foreground/10 active:scale-95"
+              >
+                {link.platform}
+                <ExternalLink size={12} />
+              </a>
+            ))}
+          </div>
+        )}
+
+        <div
+          className={`text-xs text-secondary-foreground/70 ${
+            socialLinks.length > 0 ? "mt-6" : "mt-10 border-t border-secondary-foreground/20 pt-6"
+          }`}
+        >
           © {new Date().getFullYear()} Nepali Community UK. All rights reserved.
         </div>
       </div>

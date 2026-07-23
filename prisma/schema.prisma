@@ -166,6 +166,7 @@ model Listing {
 
   author            User              @relation(fields: [authorId], references: [id], onDelete: Cascade)
   notificationLogs  NotificationLog[]
+  contactMessages   ContactMessage[]
 
   @@index([type, status, location])
   @@map("listings")
@@ -182,4 +183,39 @@ model NotificationLog {
 
   @@unique([listingId, userId])
   @@map("notification_logs")
+}
+
+enum ContactSource {
+  CONTACT_FORM
+  LISTING_INQUIRY
+}
+
+model ContactMessage {
+  id          String        @id @default(cuid())
+  source      ContactSource
+  name        String
+  email       String
+  messageBody String
+  listingId   String?
+  notes       String?
+  followUpAt  DateTime?
+  createdAt   DateTime      @default(now())
+
+  listing Listing? @relation(fields: [listingId], references: [id], onDelete: SetNull)
+
+  @@index([source, createdAt])
+  @@map("contact_messages")
+}
+
+model SocialLink {
+  id        String   @id @default(cuid())
+  platform  String
+  url       String
+  order     Int      @default(0)
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([isActive, order])
+  @@map("social_links")
 }
