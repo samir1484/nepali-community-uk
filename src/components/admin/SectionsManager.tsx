@@ -31,6 +31,7 @@ const emptyDraft = {
   title: "",
   caption: "",
   imageUrl: "",
+  linkUrl: "",
   order: 0,
   isActive: true,
 };
@@ -43,6 +44,7 @@ function toDraft(section: HomeSection): Draft {
     title: section.title,
     caption: section.caption ?? "",
     imageUrl: section.imageUrl ?? "",
+    linkUrl: section.linkUrl ?? "",
     order: section.order,
     isActive: section.isActive,
   };
@@ -80,6 +82,7 @@ export function SectionsManager({ sections }: { sections: HomeSection[] }) {
     fd.set("title", draft.title);
     fd.set("caption", draft.caption);
     fd.set("imageUrl", draft.imageUrl);
+    fd.set("linkUrl", draft.linkUrl);
     fd.set("order", String(draft.order));
     if (draft.isActive) fd.set("isActive", "on");
     return fd;
@@ -181,6 +184,19 @@ export function SectionsManager({ sections }: { sections: HomeSection[] }) {
                 />
               </div>
             )}
+
+            <div className="space-y-2">
+              <Label htmlFor="linkUrl">Link URL (optional)</Label>
+              <Input
+                id="linkUrl"
+                placeholder="/jobs"
+                value={draft.linkUrl}
+                onChange={(e) => setDraft((d) => ({ ...d, linkUrl: e.target.value }))}
+              />
+              <p className="text-xs text-muted-foreground">
+                If set, this section becomes clickable and links here (e.g. /jobs, /rooms, or a full URL).
+              </p>
+            </div>
 
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="space-y-2">

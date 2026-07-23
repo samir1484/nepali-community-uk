@@ -18,6 +18,7 @@ function parseFormData(formData: FormData) {
     title: formData.get("title"),
     caption: formData.get("caption"),
     imageUrl: formData.get("imageUrl"),
+    linkUrl: formData.get("linkUrl"),
     order: formData.get("order"),
     isActive: formData.get("isActive"),
   };
@@ -40,6 +41,7 @@ export async function createSection(
       title: parsed.data.title,
       caption: parsed.data.caption || null,
       imageUrl: parsed.data.imageUrl || null,
+      linkUrl: parsed.data.linkUrl || null,
       order: parsed.data.order,
       isActive: parsed.data.isActive,
     },
@@ -69,6 +71,7 @@ export async function updateSection(
       title: parsed.data.title,
       caption: parsed.data.caption || null,
       imageUrl: parsed.data.imageUrl || null,
+      linkUrl: parsed.data.linkUrl || null,
       order: parsed.data.order,
       isActive: parsed.data.isActive,
     },

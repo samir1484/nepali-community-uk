@@ -101,33 +101,54 @@ export default async function Home() {
         </div>
       </section>
 
-      <section className="mx-auto max-w-6xl px-4 py-16">
-        <AnimatedSection>
-          <h2 className="text-center text-2xl font-bold text-foreground">
-            Everything the community needs, in one place
-          </h2>
-          <p className="font-nepali mt-1 text-center text-muted-foreground">
-            {np.everythingNeeds}
+      <section className="relative overflow-hidden">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src="/images/culture/stupa-alt.webp"
+          alt=""
+          className="absolute inset-0 h-full w-full object-cover"
+        />
+        <div className="absolute inset-0 bg-background/80" aria-hidden="true" />
+
+        <div className="relative mx-auto max-w-6xl px-4 py-16">
+          <AnimatedSection>
+            <h2 className="text-center text-2xl font-bold text-foreground">
+              Everything the community needs, in one place
+            </h2>
+            <p className="font-nepali mt-1 text-center text-muted-foreground">
+              {np.everythingNeeds}
+            </p>
+          </AnimatedSection>
+          <StaggerContainer className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+            {highlightSections.map((item) => {
+              const card = (
+                <Card
+                  className={
+                    item.linkUrl
+                      ? "h-full cursor-pointer transition-all duration-300 hover:border-primary active:scale-[0.98]"
+                      : "h-full"
+                  }
+                >
+                  <CardContent className="pt-6">
+                    <h3 className="font-semibold text-foreground">{item.title}</h3>
+                    {item.caption && (
+                      <p className="mt-2 text-sm text-muted-foreground">{item.caption}</p>
+                    )}
+                  </CardContent>
+                </Card>
+              );
+              return (
+                <StaggerItem key={item.id}>
+                  {item.linkUrl ? <Link href={item.linkUrl}>{card}</Link> : card}
+                </StaggerItem>
+              );
+            })}
+          </StaggerContainer>
+          <p className="mt-6 text-center text-sm text-muted-foreground">
+            Jobs, rooms, events, and volunteering are live now — register to start
+            browsing and posting.
           </p>
-        </AnimatedSection>
-        <StaggerContainer className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-          {highlightSections.map((item) => (
-            <StaggerItem key={item.id}>
-              <Card>
-                <CardContent className="pt-6">
-                  <h3 className="font-semibold text-foreground">{item.title}</h3>
-                  {item.caption && (
-                    <p className="mt-2 text-sm text-muted-foreground">{item.caption}</p>
-                  )}
-                </CardContent>
-              </Card>
-            </StaggerItem>
-          ))}
-        </StaggerContainer>
-        <p className="mt-6 text-center text-sm text-muted-foreground">
-          Jobs, rooms, events, and volunteering are live now — register to start
-          browsing and posting.
-        </p>
+        </div>
       </section>
 
       <CultureShowcase sections={showcaseSections} />

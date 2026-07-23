@@ -7,6 +7,7 @@ export const sectionSchema = z.object({
   title: z.string().trim().min(2, "Title is required"),
   caption: z.string().trim().optional().or(z.literal("")),
   imageUrl: z.string().trim().optional().or(z.literal("")),
+  linkUrl: z.string().trim().optional().or(z.literal("")),
   order: z.coerce.number().int(),
   isActive: z.coerce.boolean(),
 });
