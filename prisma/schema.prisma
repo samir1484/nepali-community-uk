@@ -156,6 +156,7 @@ model Listing {
   location    String
   status      ModerationStatus @default(PENDING)
   details     Json             @default("{}")
+  images      String[]         @default([])
   authorId    String
   createdAt   DateTime         @default(now())
   updatedAt   DateTime         @updatedAt

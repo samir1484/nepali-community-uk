@@ -1,6 +1,7 @@
 "use server";
 
-import { requireAdmin } from "@/lib/auth/rbac";
+import { auth } from "@/auth";
+import { requireAdmin, NotAuthorizedError } from "@/lib/auth/rbac";
 import { uploadImage, validateImageUpload } from "@/lib/storage";
 
 export type UploadActionState = {
@@ -9,9 +10,7 @@ export type UploadActionState = {
   error?: string;
 };
 
-export async function uploadSectionImage(formData: FormData): Promise<UploadActionState> {
-  await requireAdmin();
-
+async function uploadFromFormData(formData: FormData): Promise<UploadActionState> {
   const file = formData.get("file");
   if (!(file instanceof File) || file.size === 0) {
     return { success: false, error: "No file selected." };
@@ -26,4 +25,16 @@ export async function uploadSectionImage(formData: FormData): Promise<UploadActi
   const { url } = await uploadImage({ buffer, filename: file.name, mimeType: file.type });
 
   return { success: true, url };
+}
+
+export async function uploadSectionImage(formData: FormData): Promise<UploadActionState> {
+  await requireAdmin();
+  return uploadFromFormData(formData);
+}
+
+/** Any logged-in user can upload a photo to attach to their own listing. */
+export async function uploadUserImage(formData: FormData): Promise<UploadActionState> {
+  const session = await auth();
+  if (!session?.user) throw new NotAuthorizedError();
+  return uploadFromFormData(formData);
 }

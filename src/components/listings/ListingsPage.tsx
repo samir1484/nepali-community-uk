@@ -77,6 +77,7 @@ export async function ListingsPage({
               title={listing.title}
               location={listing.location}
               details={listing.details}
+              images={listing.images}
               createdAt={listing.createdAt}
             />
           ))}

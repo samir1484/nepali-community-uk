@@ -2,7 +2,7 @@
 
 import { useActionState } from "react";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { createListing, type ListingActionState } from "@/lib/actions/listings";
 import { JOB_TYPES, ROOM_TYPES, RENT_PERIODS, typeToPath, type ListingTypeValue } from "@/lib/validation/listings";
 import { Input } from "@/components/ui/input";
@@ -10,6 +10,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
+import { ListingImageUploader } from "@/components/listings/ListingImageUploader";
 import {
   Select,
   SelectContent,
@@ -38,6 +39,7 @@ const ROOM_TYPE_LABELS: Record<(typeof ROOM_TYPES)[number], string> = {
 export function ListingForm({ type }: { type: ListingTypeValue }) {
   const router = useRouter();
   const [state, formAction, isPending] = useActionState(createListing, initialState);
+  const [images, setImages] = useState<string[]>([]);
 
   useEffect(() => {
     if (state.success) {
@@ -80,6 +82,11 @@ export function ListingForm({ type }: { type: ListingTypeValue }) {
         <Label htmlFor="location">Location</Label>
         <Input id="location" name="location" placeholder="e.g. London" required />
         <FieldError errors={state.fieldErrors?.location} />
+      </div>
+
+      <div className="space-y-2">
+        <Label>Photos</Label>
+        <ListingImageUploader value={images} onChange={setImages} />
       </div>
 
       {type === "JOB" && (

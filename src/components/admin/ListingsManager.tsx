@@ -3,6 +3,7 @@
 import { useMemo, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import type { Listing } from "@/generated/prisma/client";
 import { approveListing, rejectListing, deleteListing } from "@/lib/actions/listings";
 import { formatListingTeaser } from "@/lib/listings";
@@ -91,7 +92,17 @@ export function ListingsManager({ listings }: { listings: ListingWithAuthor[] })
         {filtered.map((listing) => (
           <Card key={listing.id}>
             <CardContent className="flex flex-col gap-3 pt-6 sm:flex-row sm:items-center sm:justify-between">
-              <div className="min-w-0">
+              <div className="flex min-w-0 gap-3">
+                {listing.images[0] && (
+                  <Image
+                    src={listing.images[0]}
+                    alt=""
+                    width={80}
+                    height={80}
+                    className="h-16 w-16 shrink-0 rounded-md object-cover"
+                  />
+                )}
+                <div className="min-w-0">
                 <div className="flex flex-wrap items-center gap-2">
                   <Badge variant="secondary">{typeLabel(listing.type)}</Badge>
                   <Badge
@@ -113,6 +124,7 @@ export function ListingsManager({ listings }: { listings: ListingWithAuthor[] })
                 <p className="text-xs text-muted-foreground">
                   Posted by {listing.author.name} ({listing.author.email})
                 </p>
+                </div>
               </div>
               <div className="flex shrink-0 gap-2">
                 {listing.status !== "APPROVED" && (

@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import { db } from "@/lib/db";
 import { formatListingDetailRows } from "@/lib/listings";
 import { typeLabel, typeToPath, type ListingTypeValue } from "@/lib/validation/listings";
@@ -26,6 +27,16 @@ export async function ListingDetailView({ type, id }: { type: ListingTypeValue; 
       <p className="mt-1 text-muted-foreground">
         {listing.location} · Posted by {listing.author.name}
       </p>
+
+      {listing.images.length > 0 && (
+        <div className="mt-6 grid grid-cols-2 gap-2 sm:grid-cols-3">
+          {listing.images.map((url) => (
+            <div key={url} className="relative aspect-square overflow-hidden rounded-lg border">
+              <Image src={url} alt="" fill className="object-cover" />
+            </div>
+          ))}
+        </div>
+      )}
 
       <dl className="mt-6 grid gap-3 rounded-lg border bg-card p-4 sm:grid-cols-2">
         {rows.map((row) => (
