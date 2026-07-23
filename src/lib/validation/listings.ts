@@ -31,6 +31,12 @@ export const roomDetailsSchema = z.object({
 export const eventDetailsSchema = z.object({
   startDate: z.string().trim().min(1, "Start date is required"),
   isOnline: z.coerce.boolean().optional().default(false),
+  ticketUrl: z
+    .string()
+    .trim()
+    .refine((v) => v === "" || /^https?:\/\/.+\..+/.test(v), "Enter a valid URL (starting with http:// or https://)")
+    .optional()
+    .or(z.literal("")),
 });
 
 export const volunteerDetailsSchema = z.object({

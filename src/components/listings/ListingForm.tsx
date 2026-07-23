@@ -191,6 +191,11 @@ export function ListingForm({ type }: { type: ListingTypeValue }) {
             <Checkbox name="isOnline" />
             This is an online event
           </label>
+          <div className="space-y-2">
+            <Label htmlFor="ticketUrl">Ticketing link (optional)</Label>
+            <Input id="ticketUrl" name="ticketUrl" type="url" placeholder="https://" />
+            <FieldError errors={state.fieldErrors?.ticketUrl} />
+          </div>
         </>
       )}
 

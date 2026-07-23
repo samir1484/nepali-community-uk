@@ -4,11 +4,14 @@ import Image from "next/image";
 import { db } from "@/lib/db";
 import { formatListingDetailRows, mapsEmbedUrl, mapsSearchUrl } from "@/lib/listings";
 import { typePluralLabel, typeToPath, type ListingTypeValue } from "@/lib/validation/listings";
+import type { JobDetails, EventDetails } from "@/lib/validation/listings";
+import { Button } from "@/components/ui/button";
+import { ContactPosterForm } from "@/components/listings/ContactPosterForm";
 
 export async function ListingDetailView({ type, id }: { type: ListingTypeValue; id: string }) {
   const listing = await db.listing.findUnique({
     where: { id },
-    include: { author: { select: { name: true } } },
+    include: { author: { select: { name: true, email: true } } },
   });
 
   if (!listing || listing.type !== type || listing.status !== "APPROVED") {
@@ -16,6 +19,10 @@ export async function ListingDetailView({ type, id }: { type: ListingTypeValue; 
   }
 
   const rows = formatListingDetailRows(type, listing.details);
+
+  const applyEmail = type === "JOB" ? (listing.details as JobDetails).applyEmail : undefined;
+  const ticketUrl = type === "EVENT" ? (listing.details as EventDetails).ticketUrl : undefined;
+  const showContactForm = type === "ROOM" || type === "BUSINESS" || type === "VOLUNTEER" || (type === "JOB" && !applyEmail);
 
   return (
     <div className="mx-auto max-w-2xl px-4 py-16">
@@ -27,6 +34,30 @@ export async function ListingDetailView({ type, id }: { type: ListingTypeValue; 
       <p className="mt-1 text-muted-foreground">
         {listing.location} · Posted by {listing.author.name}
       </p>
+
+      {applyEmail && (
+        <Button
+          className="mt-4"
+          nativeButton={false}
+          render={
+            <a href={`mailto:${applyEmail}?subject=${encodeURIComponent(`Application for ${listing.title}`)}`}>
+              Apply Now
+            </a>
+          }
+        />
+      )}
+
+      {ticketUrl && (
+        <Button
+          className="mt-4"
+          nativeButton={false}
+          render={
+            <a href={ticketUrl} target="_blank" rel="noopener noreferrer">
+              Get Tickets
+            </a>
+          }
+        />
+      )}
 
       {listing.images.length > 0 && (
         <div className="mt-6 grid grid-cols-2 gap-2 sm:grid-cols-3">
@@ -85,6 +116,12 @@ export async function ListingDetailView({ type, id }: { type: ListingTypeValue; 
           >
             View larger map
           </a>
+        </div>
+      )}
+
+      {showContactForm && (
+        <div className="mt-8">
+          <ContactPosterForm listingId={listing.id} posterName={listing.author.name} />
         </div>
       )}
     </div>

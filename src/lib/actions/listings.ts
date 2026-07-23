@@ -44,6 +44,7 @@ function extractDetails(type: ListingTypeValue, formData: FormData): Record<stri
       return {
         startDate: formData.get("startDate"),
         isOnline: formData.get("isOnline") === "on",
+        ticketUrl: formData.get("ticketUrl"),
       };
     case "VOLUNTEER":
       return {

@@ -59,7 +59,6 @@ export function formatListingDetailRows(
         { label: "Company", value: d.company },
         { label: "Job type", value: JOB_TYPE_LABELS[d.jobType] ?? d.jobType },
         ...(d.salaryRange ? [{ label: "Salary", value: d.salaryRange }] : []),
-        ...(d.applyEmail ? [{ label: "Apply via", value: d.applyEmail }] : []),
       ];
     }
     case "ROOM": {

@@ -19,5 +19,6 @@ export async function sendViaResend(input: SendEmailInput) {
     to: input.to,
     subject: input.subject,
     html: input.html,
+    replyTo: input.replyTo,
   });
 }
