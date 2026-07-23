@@ -87,9 +87,8 @@ export async function registerUser(
   });
 
   const { subject, html } = welcomeTemplate({ name: parsed.data.name });
-  await sendEmail({ to: parsed.data.email, subject, html }).catch(() => {
-    // Registration already succeeded — a failed welcome email shouldn't block it.
-  });
+  // Fire-and-forget: registration already succeeded, don't make the user wait on email delivery.
+  sendEmail({ to: parsed.data.email, subject, html }).catch(() => {});
 
   return { success: true, message: "Account created. You can now log in." };
 }

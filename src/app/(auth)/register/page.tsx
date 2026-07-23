@@ -8,6 +8,10 @@ export const metadata: Metadata = {
   description: "Create your Nepali Community UK account.",
 };
 
+// Registration uploads a profile photo to Supabase Storage before responding,
+// which can take longer than Vercel's default function timeout on a cold start.
+export const maxDuration = 30;
+
 export default async function RegisterPage() {
   const backgroundImage = await getSiteImage("page.register.image", "/images/hero/hero-bg.jpg");
 
