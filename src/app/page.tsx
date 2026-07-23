@@ -118,8 +118,8 @@ export default async function Home() {
           ))}
         </StaggerContainer>
         <p className="mt-6 text-center text-sm text-muted-foreground">
-          These modules are launching soon — register now to be notified when they go
-          live.
+          Jobs, rooms, events, and volunteering are live now — register to start
+          browsing and posting.
         </p>
       </section>
 

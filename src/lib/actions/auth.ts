@@ -3,6 +3,9 @@
 import bcrypt from "bcryptjs";
 import { db } from "@/lib/db";
 import { registerSchema } from "@/lib/validation/auth";
+import { uploadImage, validateImageUpload } from "@/lib/storage";
+import { sendEmail } from "@/lib/email/mailer";
+import { welcomeTemplate } from "@/lib/email/templates/welcome";
 
 export type RegisterActionState = {
   success: boolean;
@@ -19,6 +22,7 @@ export async function registerUser(
     email: formData.get("email"),
     password: formData.get("password"),
     phone: formData.get("phone"),
+    address: formData.get("address"),
     location: formData.get("location"),
     occupation: formData.get("occupation"),
     userType: formData.get("userType"),
@@ -34,6 +38,19 @@ export async function registerUser(
     };
   }
 
+  const photo = formData.get("photo");
+  if (!(photo instanceof File) || photo.size === 0) {
+    return {
+      success: false,
+      message: "Please add a profile photo.",
+      fieldErrors: { photo: ["A profile photo is required."] },
+    };
+  }
+  const photoError = validateImageUpload({ size: photo.size, type: photo.type });
+  if (photoError) {
+    return { success: false, message: photoError, fieldErrors: { photo: [photoError] } };
+  }
+
   const existing = await db.user.findUnique({
     where: { email: parsed.data.email },
   });
@@ -45,7 +62,14 @@ export async function registerUser(
     };
   }
 
-  const passwordHash = await bcrypt.hash(parsed.data.password, 10);
+  const [passwordHash, photoUpload] = await Promise.all([
+    bcrypt.hash(parsed.data.password, 10),
+    uploadImage({
+      buffer: Buffer.from(await photo.arrayBuffer()),
+      filename: photo.name,
+      mimeType: photo.type,
+    }),
+  ]);
 
   await db.user.create({
     data: {
@@ -53,11 +77,18 @@ export async function registerUser(
       email: parsed.data.email,
       passwordHash,
       phone: parsed.data.phone,
+      address: parsed.data.address,
       location: parsed.data.location,
       occupation: parsed.data.occupation,
       userType: parsed.data.userType,
       interests: parsed.data.interests,
+      image: photoUpload.url,
     },
+  });
+
+  const { subject, html } = welcomeTemplate({ name: parsed.data.name });
+  await sendEmail({ to: parsed.data.email, subject, html }).catch(() => {
+    // Registration already succeeded — a failed welcome email shouldn't block it.
   });
 
   return { success: true, message: "Account created. You can now log in." };

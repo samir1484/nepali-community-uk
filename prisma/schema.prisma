@@ -49,6 +49,7 @@ model User {
   email         String    @unique
   passwordHash  String?
   phone         String?
+  address       String?
   location      String?
   occupation    String?
   userType      UserType  @default(OTHER)
@@ -61,6 +62,7 @@ model User {
 
   accounts Account[]
   sessions Session[]
+  listings Listing[]
 
   @@map("users")
 }
@@ -131,4 +133,35 @@ model HomeSection {
 
   @@index([type, isActive, order])
   @@map("home_sections")
+}
+
+enum ListingType {
+  JOB
+  ROOM
+  EVENT
+  VOLUNTEER
+}
+
+enum ModerationStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+model Listing {
+  id          String           @id @default(cuid())
+  type        ListingType
+  title       String
+  description String
+  location    String
+  status      ModerationStatus @default(PENDING)
+  details     Json             @default("{}")
+  authorId    String
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+
+  author User @relation(fields: [authorId], references: [id], onDelete: Cascade)
+
+  @@index([type, status, location])
+  @@map("listings")
 }

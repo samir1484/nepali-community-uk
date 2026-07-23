@@ -32,6 +32,7 @@ export const registerSchema = z.object({
   email: z.string().trim().toLowerCase().email("Enter a valid email address"),
   password: z.string().min(8, "Password must be at least 8 characters"),
   phone: z.string().trim().min(5, "Enter a valid phone number"),
+  address: z.string().trim().min(5, "Enter your full address"),
   location: z.string().trim().min(2, "Location is required"),
   occupation: z.string().trim().min(2, "Occupation is required"),
   userType: z.enum(USER_TYPES),

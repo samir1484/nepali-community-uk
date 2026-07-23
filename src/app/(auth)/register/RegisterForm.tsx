@@ -100,6 +100,20 @@ export function RegisterForm() {
           <Input id="occupation" name="occupation" required />
           <FieldError errors={state.fieldErrors?.occupation} />
         </div>
+        <div className="space-y-2 sm:col-span-2">
+          <Label htmlFor="address">Address</Label>
+          <Input id="address" name="address" placeholder="Street, city, postcode" required />
+          <FieldError errors={state.fieldErrors?.address} />
+        </div>
+      </div>
+
+      <div className="space-y-2">
+        <Label htmlFor="photo">Profile photo</Label>
+        <Input id="photo" name="photo" type="file" accept="image/jpeg,image/png,image/webp,image/gif" required />
+        <p className="text-xs text-muted-foreground">
+          Required — helps other members recognise you when you post a listing.
+        </p>
+        <FieldError errors={state.fieldErrors?.photo} />
       </div>
 
       <div className="space-y-2">

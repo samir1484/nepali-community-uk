@@ -3,9 +3,11 @@ import { PennantMotif } from "./PennantMotif";
 import { UserMenu } from "./UserMenu";
 
 const NAV_LINKS = [
-  { href: "/", label: "Home" },
+  { href: "/jobs", label: "Jobs" },
+  { href: "/rooms", label: "Rooms" },
+  { href: "/events", label: "Events" },
+  { href: "/volunteer", label: "Volunteer" },
   { href: "/about", label: "About" },
-  { href: "/founder", label: "Founder" },
   { href: "/contact", label: "Contact" },
 ];
 
@@ -18,7 +20,7 @@ export function Header() {
           <span className="text-lg font-bold text-foreground">Nepali Community UK</span>
         </Link>
 
-        <nav className="hidden items-center gap-6 md:flex">
+        <nav className="hidden items-center gap-4 lg:flex">
           {NAV_LINKS.map((link) => (
             <Link
               key={link.href}
