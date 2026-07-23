@@ -110,3 +110,15 @@ const TYPE_PLURAL_LABELS: Record<ListingTypeValue, string> = {
 export function typePluralLabel(type: ListingTypeValue): string {
   return TYPE_PLURAL_LABELS[type];
 }
+
+const TYPE_BACKGROUND_IMAGES: Record<ListingTypeValue, string> = {
+  JOB: "/images/culture/temple.jpg",
+  ROOM: "/images/culture/mountains.jpg",
+  EVENT: "/images/culture/festival.jpg",
+  VOLUNTEER: "/images/culture/tradition.jpg",
+  BUSINESS: "/images/culture/khukuri.webp",
+};
+
+export function typeBackgroundImage(type: ListingTypeValue): string {
+  return TYPE_BACKGROUND_IMAGES[type];
+}

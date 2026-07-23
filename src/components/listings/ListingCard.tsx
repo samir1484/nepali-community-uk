@@ -25,7 +25,7 @@ export function ListingCard({
 
   return (
     <Link href={`/${path}/${id}`}>
-      <Card className="h-full transition-colors hover:border-primary">
+      <Card className="h-full transition-all duration-300 hover:border-primary active:scale-[0.98]">
         {images[0] && (
           <Image
             src={images[0]}

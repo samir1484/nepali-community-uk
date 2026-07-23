@@ -3,10 +3,11 @@ import Link from "next/link";
 import Image from "next/image";
 import { db } from "@/lib/db";
 import { formatListingDetailRows, mapsEmbedUrl, mapsSearchUrl } from "@/lib/listings";
-import { typePluralLabel, typeToPath, type ListingTypeValue } from "@/lib/validation/listings";
+import { typePluralLabel, typeToPath, typeBackgroundImage, type ListingTypeValue } from "@/lib/validation/listings";
 import type { JobDetails, EventDetails } from "@/lib/validation/listings";
 import { Button } from "@/components/ui/button";
 import { ContactPosterForm } from "@/components/listings/ContactPosterForm";
+import { PageBackground } from "@/components/layout/PageBackground";
 
 export async function ListingDetailView({ type, id }: { type: ListingTypeValue; id: string }) {
   const listing = await db.listing.findUnique({
@@ -25,6 +26,7 @@ export async function ListingDetailView({ type, id }: { type: ListingTypeValue; 
   const showContactForm = type === "ROOM" || type === "BUSINESS" || type === "VOLUNTEER" || (type === "JOB" && !applyEmail);
 
   return (
+    <PageBackground image={typeBackgroundImage(type)}>
     <div className="mx-auto max-w-2xl px-4 py-16">
       <Link href={`/${typeToPath(type)}`} className="text-sm text-primary underline underline-offset-4">
         ← Back to {typePluralLabel(type)}
@@ -125,5 +127,6 @@ export async function ListingDetailView({ type, id }: { type: ListingTypeValue; 
         </div>
       )}
     </div>
+    </PageBackground>
   );
 }
