@@ -1,0 +1,32 @@
+import Link from "next/link";
+import { db } from "@/lib/db";
+import { Card, CardContent } from "@/components/ui/card";
+
+export default async function AdminDashboardPage() {
+  const userCount = await db.user.count();
+  const sectionCount = await db.homeSection.count();
+
+  return (
+    <div>
+      <h1 className="text-2xl font-bold text-foreground">Dashboard</h1>
+      <p className="mt-1 text-muted-foreground">Manage the Nepali Community UK website.</p>
+
+      <div className="mt-8 grid gap-4 sm:grid-cols-2">
+        <Card>
+          <CardContent className="pt-6">
+            <p className="text-sm text-muted-foreground">Registered users</p>
+            <p className="mt-1 text-3xl font-bold text-foreground">{userCount}</p>
+          </CardContent>
+        </Card>
+        <Link href="/admin/sections">
+          <Card className="transition-colors hover:border-primary">
+            <CardContent className="pt-6">
+              <p className="text-sm text-muted-foreground">Homepage sections</p>
+              <p className="mt-1 text-3xl font-bold text-foreground">{sectionCount}</p>
+            </CardContent>
+          </Card>
+        </Link>
+      </div>
+    </div>
+  );
+}

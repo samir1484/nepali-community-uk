@@ -29,10 +29,27 @@ built-in dev database instead of `docker-compose`.
    doesn't yet support the shadow-database reset step `migrate dev` relies on. Switch to
    `migrate dev` once `DATABASE_URL` points at a real Postgres instance, e.g. Supabase.)
 
-4. Run the app:
+4. Seed an admin account and the homepage's starter content:
+   ```bash
+   node scripts/seed.js
+   ```
+   Creates `admin@nepalicommunity.uk` / `AdminPass123!` (dev-only — change this
+   before any real deployment) and, on first run, seeds the highlight cards and
+   photo showcase panels shown on the homepage.
+
+5. Run the app:
    ```bash
    npm run dev
    ```
+
+## Admin panel
+
+Log in as the seeded admin account, then visit `/admin`. From **Homepage Sections**
+you can add, edit, delete, and reorder the small feature cards ("Highlight") and the
+full-bleed photo panels ("Showcase") shown on the homepage, including uploading new
+photos directly (stored under `public/uploads`, served at `/uploads/...`). Access is
+gated by `role` (`ADMIN`/`MODERATOR`) both in `src/proxy.ts` and again in
+`src/app/(admin)/admin/layout.tsx`.
 
 ## Going to production
 

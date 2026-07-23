@@ -4,28 +4,17 @@ import { Card, CardContent } from "@/components/ui/card";
 import { NepalFlag } from "@/components/layout/NepalFlag";
 import { CultureShowcase } from "@/components/home/CultureShowcase";
 import { firstExistingPublicFile } from "@/lib/media";
+import { db } from "@/lib/db";
 import { AnimatedSection, StaggerContainer, StaggerItem } from "@/components/animation/AnimatedSection";
 
-const HIGHLIGHTS = [
-  {
-    title: "Jobs & Careers",
-    description: "Find and post job opportunities within the community.",
-  },
-  {
-    title: "Rooms & Housing",
-    description: "Browse room listings shared by fellow community members.",
-  },
-  {
-    title: "Events & Festivals",
-    description: "Stay up to date with Nepali cultural events across the UK.",
-  },
-  {
-    title: "Business Directory",
-    description: "Discover and support Nepali-owned businesses.",
-  },
-];
+export default async function Home() {
+  const allSections = await db.homeSection.findMany({
+    where: { isActive: true },
+    orderBy: { order: "asc" },
+  });
+  const highlightSections = allSections.filter((s) => s.type === "HIGHLIGHT");
+  const showcaseSections = allSections.filter((s) => s.type === "SHOWCASE");
 
-export default function Home() {
   const heroVideo = firstExistingPublicFile([
     "images/hero/hero-video.mp4",
     "images/hero/hero-video.webm",
@@ -115,12 +104,14 @@ export default function Home() {
           </h2>
         </AnimatedSection>
         <StaggerContainer className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-          {HIGHLIGHTS.map((item) => (
-            <StaggerItem key={item.title}>
+          {highlightSections.map((item) => (
+            <StaggerItem key={item.id}>
               <Card>
                 <CardContent className="pt-6">
                   <h3 className="font-semibold text-foreground">{item.title}</h3>
-                  <p className="mt-2 text-sm text-muted-foreground">{item.description}</p>
+                  {item.caption && (
+                    <p className="mt-2 text-sm text-muted-foreground">{item.caption}</p>
+                  )}
                 </CardContent>
               </Card>
             </StaggerItem>
@@ -132,7 +123,7 @@ export default function Home() {
         </p>
       </section>
 
-      <CultureShowcase />
+      <CultureShowcase sections={showcaseSections} />
 
       <section className="border-t bg-secondary/40">
         <AnimatedSection className="mx-auto flex max-w-6xl flex-col items-center gap-6 px-4 py-16 text-center sm:flex-row sm:text-left">
