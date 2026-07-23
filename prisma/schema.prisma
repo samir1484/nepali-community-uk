@@ -60,9 +60,10 @@ model User {
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 
-  accounts Account[]
-  sessions Session[]
-  listings Listing[]
+  accounts          Account[]
+  sessions          Session[]
+  listings          Listing[]
+  notificationLogs  NotificationLog[]
 
   @@map("users")
 }
@@ -162,8 +163,22 @@ model Listing {
   createdAt   DateTime         @default(now())
   updatedAt   DateTime         @updatedAt
 
-  author User @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  author            User              @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  notificationLogs  NotificationLog[]
 
   @@index([type, status, location])
   @@map("listings")
+}
+
+model NotificationLog {
+  id        String   @id @default(cuid())
+  listingId String
+  userId    String
+  sentAt    DateTime @default(now())
+
+  listing Listing @relation(fields: [listingId], references: [id], onDelete: Cascade)
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([listingId, userId])
+  @@map("notification_logs")
 }

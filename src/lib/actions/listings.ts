@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { auth } from "@/auth";
 import { db } from "@/lib/db";
 import { requireAdmin, NotAuthorizedError } from "@/lib/auth/rbac";
+import { notifyMatchingUsers } from "@/lib/notifications/matchInterests";
 import {
   listingBaseSchema,
   detailsSchemaFor,
@@ -91,7 +92,7 @@ export async function createListing(
   const status = role === "ADMIN" || role === "MODERATOR" ? "APPROVED" : "PENDING";
   const images = formData.getAll("images").filter((v): v is string => typeof v === "string" && v.startsWith("/uploads/")).slice(0, 6);
 
-  await db.listing.create({
+  const listing = await db.listing.create({
     data: {
       type: base.data.type,
       title: base.data.title,
@@ -103,6 +104,10 @@ export async function createListing(
       authorId: session.user.id,
     },
   });
+
+  if (status === "APPROVED") {
+    await notifyMatchingUsers(listing);
+  }
 
   revalidatePath(`/${typeToPath(base.data.type)}`);
   revalidatePath("/admin/listings");
@@ -119,6 +124,7 @@ export async function createListing(
 export async function approveListing(id: string): Promise<{ success: boolean; message: string }> {
   await requireAdmin();
   const listing = await db.listing.update({ where: { id }, data: { status: "APPROVED" } });
+  await notifyMatchingUsers(listing);
   revalidatePath(`/${typeToPath(listing.type)}`);
   revalidatePath("/admin/listings");
   return { success: true, message: "Listing approved." };
