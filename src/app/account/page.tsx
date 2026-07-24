@@ -8,6 +8,10 @@ import { PageBackground } from "@/components/layout/PageBackground";
 
 export const metadata: Metadata = { title: "My Account | Nepali Community UK" };
 
+// Profile photo upload goes to Supabase Storage — safety margin against
+// Vercel's default function timeout on a cold start.
+export const maxDuration = 30;
+
 export default async function AccountPage() {
   const session = await auth();
   if (!session?.user?.id) redirect("/login?callbackUrl=/account");

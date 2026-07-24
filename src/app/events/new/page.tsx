@@ -7,6 +7,10 @@ import { getListingBackground } from "@/lib/settings";
 
 export const metadata: Metadata = { title: "Post an Event | Nepali Community UK" };
 
+// Photo uploads go to Supabase Storage — safety margin against Vercel's
+// default function timeout on a cold start.
+export const maxDuration = 30;
+
 export default async function NewEventPage() {
   const session = await auth();
   if (!session?.user) redirect("/login?callbackUrl=/events/new");

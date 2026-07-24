@@ -5,6 +5,7 @@ import Image from "next/image";
 import { X, Loader2, Upload } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { uploadSectionImage, type UploadActionState } from "@/lib/actions/uploads";
+import { compressImage } from "@/lib/imageCompression";
 
 export function ImageUploader({
   value,
@@ -23,10 +24,11 @@ export function ImageUploader({
     if (!file) return;
     setError(null);
 
-    const formData = new FormData();
-    formData.set("file", file);
-
     startTransition(async () => {
+      const compressed = await compressImage(file);
+      const formData = new FormData();
+      formData.set("file", compressed);
+
       const result = await uploadAction(formData);
       if (!result.success || !result.url) {
         setError(result.error ?? "Upload failed.");

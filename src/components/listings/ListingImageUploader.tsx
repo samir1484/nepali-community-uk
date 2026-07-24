@@ -5,6 +5,7 @@ import Image from "next/image";
 import { X, Loader2, Upload } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { uploadUserImage } from "@/lib/actions/uploads";
+import { compressImage } from "@/lib/imageCompression";
 
 const MAX_IMAGES = 6;
 
@@ -33,8 +34,9 @@ export function ListingImageUploader({
     startTransition(async () => {
       const uploaded: string[] = [];
       for (const file of selected) {
+        const compressed = await compressImage(file);
         const formData = new FormData();
-        formData.set("file", file);
+        formData.set("file", compressed);
         const result = await uploadUserImage(formData);
         if (result.success && result.url) {
           uploaded.push(result.url);

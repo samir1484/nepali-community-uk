@@ -7,6 +7,10 @@ import { getListingBackground } from "@/lib/settings";
 
 export const metadata: Metadata = { title: "Add Your Business | Nepali Community UK" };
 
+// Photo uploads go to Supabase Storage — safety margin against Vercel's
+// default function timeout on a cold start.
+export const maxDuration = 30;
+
 export default async function NewBusinessPage() {
   const session = await auth();
   if (!session?.user) redirect("/login?callbackUrl=/businesses/new");
