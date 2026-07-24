@@ -4,14 +4,16 @@ import { useRef, useState, useTransition } from "react";
 import Image from "next/image";
 import { X, Loader2, Upload } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { uploadSectionImage } from "@/lib/actions/uploads";
+import { uploadSectionImage, type UploadActionState } from "@/lib/actions/uploads";
 
 export function ImageUploader({
   value,
   onChange,
+  uploadAction = uploadSectionImage,
 }: {
   value: string;
   onChange: (url: string) => void;
+  uploadAction?: (formData: FormData) => Promise<UploadActionState>;
 }) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [isPending, startTransition] = useTransition();
@@ -25,7 +27,7 @@ export function ImageUploader({
     formData.set("file", file);
 
     startTransition(async () => {
-      const result = await uploadSectionImage(formData);
+      const result = await uploadAction(formData);
       if (!result.success || !result.url) {
         setError(result.error ?? "Upload failed.");
         return;

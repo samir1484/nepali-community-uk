@@ -108,15 +108,6 @@ export function RegisterForm() {
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="photo">Profile photo</Label>
-        <Input id="photo" name="photo" type="file" accept="image/jpeg,image/png,image/webp,image/gif" required />
-        <p className="text-xs text-muted-foreground">
-          Required — helps other members recognise you when you post a listing.
-        </p>
-        <FieldError errors={state.fieldErrors?.photo} />
-      </div>
-
-      <div className="space-y-2">
         <Label htmlFor="userType">User type</Label>
         <Select name="userType" defaultValue="OTHER">
           <SelectTrigger id="userType" className="w-full">

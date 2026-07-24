@@ -3,7 +3,6 @@
 import bcrypt from "bcryptjs";
 import { db } from "@/lib/db";
 import { registerSchema } from "@/lib/validation/auth";
-import { uploadImage, validateImageUpload } from "@/lib/storage";
 import { sendEmail } from "@/lib/email/mailer";
 import { welcomeTemplate } from "@/lib/email/templates/welcome";
 
@@ -38,19 +37,6 @@ export async function registerUser(
     };
   }
 
-  const photo = formData.get("photo");
-  if (!(photo instanceof File) || photo.size === 0) {
-    return {
-      success: false,
-      message: "Please add a profile photo.",
-      fieldErrors: { photo: ["A profile photo is required."] },
-    };
-  }
-  const photoError = validateImageUpload({ size: photo.size, type: photo.type });
-  if (photoError) {
-    return { success: false, message: photoError, fieldErrors: { photo: [photoError] } };
-  }
-
   const existing = await db.user.findUnique({
     where: { email: parsed.data.email },
   });
@@ -62,14 +48,7 @@ export async function registerUser(
     };
   }
 
-  const [passwordHash, photoUpload] = await Promise.all([
-    bcrypt.hash(parsed.data.password, 10),
-    uploadImage({
-      buffer: Buffer.from(await photo.arrayBuffer()),
-      filename: photo.name,
-      mimeType: photo.type,
-    }),
-  ]);
+  const passwordHash = await bcrypt.hash(parsed.data.password, 10);
 
   await db.user.create({
     data: {
@@ -82,7 +61,6 @@ export async function registerUser(
       occupation: parsed.data.occupation,
       userType: parsed.data.userType,
       interests: parsed.data.interests,
-      image: photoUpload.url,
     },
   });
 
@@ -90,5 +68,8 @@ export async function registerUser(
   // Fire-and-forget: registration already succeeded, don't make the user wait on email delivery.
   sendEmail({ to: parsed.data.email, subject, html }).catch(() => {});
 
-  return { success: true, message: "Account created. You can now log in." };
+  return {
+    success: true,
+    message: "Account created. You can now log in — add a profile photo any time from My Account.",
+  };
 }

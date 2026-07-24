@@ -55,3 +55,17 @@ export async function changePassword(
 
   return { success: true, message: "Password updated." };
 }
+
+export async function updateProfilePhoto(url: string): Promise<{ success: boolean }> {
+  const session = await auth();
+  if (!session?.user?.id) {
+    return { success: false };
+  }
+
+  await db.user.update({
+    where: { id: session.user.id },
+    data: { image: url || null },
+  });
+
+  return { success: true };
+}
