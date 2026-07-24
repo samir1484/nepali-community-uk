@@ -4,10 +4,7 @@ import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { toast } from "sonner";
 
-const WHATSAPP_NUMBER = "447426600263";
-const WHATSAPP_URL = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(
-  "Hi! I'd like to join the Nepali Community UK WhatsApp group."
-)}`;
+const WHATSAPP_URL = "https://chat.whatsapp.com/Grgq9kMhyWqEPmjb0qkpe3?s=sh&p=i&mlu=4&amv=2";
 
 export function WhatsAppButton() {
   const { data: session, status } = useSession();
