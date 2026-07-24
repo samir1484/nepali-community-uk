@@ -21,10 +21,15 @@ async function uploadFromFormData(formData: FormData): Promise<UploadActionState
     return { success: false, error: validationError };
   }
 
-  const buffer = Buffer.from(await file.arrayBuffer());
-  const { url } = await uploadImage({ buffer, filename: file.name, mimeType: file.type });
-
-  return { success: true, url };
+  try {
+    const buffer = Buffer.from(await file.arrayBuffer());
+    const { url } = await uploadImage({ buffer, filename: file.name, mimeType: file.type });
+    return { success: true, url };
+  } catch (err) {
+    // TEMP DEBUG: surface the real error instead of a generic digest.
+    const message = err instanceof Error ? `${err.name}: ${err.message}\n${err.stack}` : String(err);
+    return { success: false, error: "DEBUG: " + message };
+  }
 }
 
 export async function uploadSectionImage(formData: FormData): Promise<UploadActionState> {
