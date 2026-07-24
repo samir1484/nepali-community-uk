@@ -26,8 +26,7 @@ async function uploadFromFormData(formData: FormData): Promise<UploadActionState
     return { success: true, url };
   } catch (err) {
     console.error("uploadFromFormData failed", err);
-    const message = err instanceof Error ? `${err.name}: ${err.message}` : String(err);
-    return { success: false, error: "DEBUG2: " + message };
+    return { success: false, error: "Could not upload the image." };
   }
 }
 
