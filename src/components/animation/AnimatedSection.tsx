@@ -86,7 +86,7 @@ export function ParallaxImage({ src, alt }: { src: string; alt: string }) {
   return (
     <div ref={ref} className="absolute inset-0 overflow-hidden">
       <motion.div style={{ y }} className="absolute inset-x-0 -top-[10%] h-[120%]">
-        <Image src={src} alt={alt} fill className="object-cover" sizes="100vw" />
+        <Image src={src} alt={alt} fill quality={90} className="object-cover" sizes="100vw" />
       </motion.div>
     </div>
   );

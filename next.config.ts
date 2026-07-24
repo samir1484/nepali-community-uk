@@ -9,6 +9,7 @@ const nextConfig: NextConfig = {
     cpus: 1,
   },
   images: {
+    qualities: [75, 90],
     remotePatterns: [
       {
         protocol: "https",
