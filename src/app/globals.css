@@ -163,3 +163,23 @@
     animation: none;
   }
 }
+
+@keyframes whatsapp-pop {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.12);
+  }
+}
+
+.animate-whatsapp-pop {
+  animation: whatsapp-pop 2.5s ease-in-out 3;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-whatsapp-pop {
+    animation: none;
+  }
+}
