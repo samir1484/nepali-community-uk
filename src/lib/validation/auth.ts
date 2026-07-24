@@ -27,6 +27,22 @@ export const INTERESTS = [
   "IMMIGRATION",
 ] as const;
 
+export const INTEREST_LABELS: Record<(typeof INTERESTS)[number], string> = {
+  JOBS: "Jobs",
+  EVENTS: "Events",
+  ROOMS: "Rooms",
+  BLOGS: "Blogs",
+  NEWS: "News",
+  HOUSING: "Housing",
+  BUSINESS: "Business",
+  EDUCATION: "Education",
+  FESTIVALS: "Festivals",
+  TECHNOLOGY: "Technology",
+  HEALTH: "Health",
+  SPORTS: "Sports",
+  IMMIGRATION: "Immigration",
+};
+
 export const registerSchema = z.object({
   name: z.string().trim().min(2, "Full name is required"),
   email: z.string().trim().toLowerCase().email("Enter a valid email address"),

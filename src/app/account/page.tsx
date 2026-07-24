@@ -4,7 +4,9 @@ import { auth } from "@/auth";
 import { db } from "@/lib/db";
 import { ChangePasswordForm } from "@/components/account/ChangePasswordForm";
 import { ProfilePhotoUploader } from "@/components/account/ProfilePhotoUploader";
+import { ProfileDetailsForm } from "@/components/account/ProfileDetailsForm";
 import { PageBackground } from "@/components/layout/PageBackground";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export const metadata: Metadata = { title: "My Account | Nepali Community UK" };
 
@@ -27,15 +29,35 @@ export default async function AccountPage() {
           Signed in as {user.name} ({user.email})
         </p>
 
-        <div className="mt-8">
-          <h2 className="mb-3 font-semibold text-foreground">Profile photo</h2>
-          <ProfilePhotoUploader initialImage={user.image ?? ""} />
-        </div>
+        <Tabs defaultValue="profile" className="mt-8">
+          <TabsList>
+            <TabsTrigger value="profile">Profile</TabsTrigger>
+            <TabsTrigger value="password">Password</TabsTrigger>
+          </TabsList>
 
-        <div className="mt-8">
-          <h2 className="mb-3 font-semibold text-foreground">Change password</h2>
-          <ChangePasswordForm />
-        </div>
+          <TabsContent value="profile" className="mt-4 space-y-6">
+            <div>
+              <h2 className="mb-3 font-semibold text-foreground">Profile photo</h2>
+              <ProfilePhotoUploader initialImage={user.image ?? ""} />
+            </div>
+
+            <div>
+              <h2 className="mb-3 font-semibold text-foreground">Profile details</h2>
+              <ProfileDetailsForm
+                initialName={user.name}
+                initialEmail={user.email}
+                initialPhone={user.phone ?? ""}
+                initialLocation={user.location ?? ""}
+                initialInterests={user.interests}
+              />
+            </div>
+          </TabsContent>
+
+          <TabsContent value="password" className="mt-4">
+            <h2 className="mb-3 font-semibold text-foreground">Change password</h2>
+            <ChangePasswordForm />
+          </TabsContent>
+        </Tabs>
       </div>
     </PageBackground>
   );

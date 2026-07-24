@@ -3,7 +3,7 @@
 import { useActionState } from "react";
 import Link from "next/link";
 import { registerUser, type RegisterActionState } from "@/lib/actions/auth";
-import { INTERESTS, USER_TYPES } from "@/lib/validation/auth";
+import { INTERESTS, INTEREST_LABELS, USER_TYPES } from "@/lib/validation/auth";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
@@ -27,22 +27,6 @@ const USER_TYPE_LABELS: Record<(typeof USER_TYPES)[number], string> = {
   BUSINESS_OWNER: "Business Owner",
   VOLUNTEER: "Volunteer",
   OTHER: "Other",
-};
-
-const INTEREST_LABELS: Record<(typeof INTERESTS)[number], string> = {
-  JOBS: "Jobs",
-  EVENTS: "Events",
-  ROOMS: "Rooms",
-  BLOGS: "Blogs",
-  NEWS: "News",
-  HOUSING: "Housing",
-  BUSINESS: "Business",
-  EDUCATION: "Education",
-  FESTIVALS: "Festivals",
-  TECHNOLOGY: "Technology",
-  HEALTH: "Health",
-  SPORTS: "Sports",
-  IMMIGRATION: "Immigration",
 };
 
 export function RegisterForm() {
