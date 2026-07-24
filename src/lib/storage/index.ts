@@ -1,5 +1,5 @@
 export type UploadInput = {
-  buffer: Buffer;
+  file: File;
   filename: string;
   mimeType: string;
 };

@@ -13,7 +13,8 @@ export async function uploadLocal(input: UploadInput): Promise<UploadResult> {
   const filename = `${randomUUID()}${ext}`;
   const filePath = path.join(UPLOAD_DIR, filename);
 
-  await writeFile(filePath, input.buffer);
+  const buffer = Buffer.from(await input.file.arrayBuffer());
+  await writeFile(filePath, buffer);
 
   return { url: `${PUBLIC_PREFIX}${filename}` };
 }

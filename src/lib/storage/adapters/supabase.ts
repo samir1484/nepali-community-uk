@@ -21,7 +21,7 @@ export async function uploadSupabase(input: UploadInput): Promise<UploadResult> 
   const ext = path.extname(input.filename).toLowerCase() || ".jpg";
   const filename = `${randomUUID()}${ext}`;
 
-  const { error } = await supabase.storage.from(BUCKET).upload(filename, input.buffer, {
+  const { error } = await supabase.storage.from(BUCKET).upload(filename, input.file, {
     contentType: input.mimeType,
     cacheControl: "31536000",
   });

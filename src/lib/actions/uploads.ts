@@ -22,13 +22,11 @@ async function uploadFromFormData(formData: FormData): Promise<UploadActionState
   }
 
   try {
-    const buffer = Buffer.from(await file.arrayBuffer());
-    const { url } = await uploadImage({ buffer, filename: file.name, mimeType: file.type });
+    const { url } = await uploadImage({ file, filename: file.name, mimeType: file.type });
     return { success: true, url };
   } catch (err) {
-    // TEMP DEBUG: surface the real error instead of a generic digest.
-    const message = err instanceof Error ? `${err.name}: ${err.message}\n${err.stack}` : String(err);
-    return { success: false, error: "DEBUG: " + message };
+    console.error("uploadFromFormData failed", err);
+    return { success: false, error: "Could not upload the image." };
   }
 }
 
