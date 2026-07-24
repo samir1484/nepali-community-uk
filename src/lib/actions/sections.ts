@@ -92,7 +92,7 @@ export async function deleteSection(id: string): Promise<{ success: boolean; mes
 
   await db.homeSection.delete({ where: { id } });
 
-  if (section.imageUrl?.startsWith("/uploads/")) {
+  if (section.imageUrl) {
     await deleteImage(section.imageUrl);
   }
 

@@ -91,7 +91,7 @@ export async function createListing(
 
   const role = session.user.role;
   const status = role === "ADMIN" || role === "MODERATOR" ? "APPROVED" : "PENDING";
-  const images = formData.getAll("images").filter((v): v is string => typeof v === "string" && v.startsWith("/uploads/")).slice(0, 6);
+  const images = formData.getAll("images").filter((v): v is string => typeof v === "string" && v.length > 0).slice(0, 6);
 
   const listing = await db.listing.create({
     data: {
