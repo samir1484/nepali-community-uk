@@ -58,7 +58,7 @@ export function AdvertiseForm() {
 
       <div className="space-y-2">
         <Label htmlFor="budget">Approximate budget (optional)</Label>
-        <Input id="budget" name="budget" placeholder="e.g. £100 per month" />
+        <Input id="budget" name="budget" placeholder="£20 per month" />
       </div>
 
       <div className="space-y-2">
