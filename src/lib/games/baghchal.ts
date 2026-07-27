@@ -270,16 +270,50 @@ export function chooseTigerMove(state: GameState): Move | null {
 }
 
 /**
- * The single source of truth for scoring, used by the client to show a score
- * and by the server to recompute it — a client-supplied number is never
- * trusted on its own.
+ * Goat AI, used when the player takes the tigers. Mirrors what a competent
+ * human does: don't leave a goat with an empty point straight behind it, and
+ * squeeze the tigers' room. Placement also matters more than movement, so it
+ * scores the resulting position rather than the move itself.
  */
-export function scoreFor(input: {
+export function chooseGoatMove(state: GameState): Move | null {
+  const moves = goatMoves(state);
+  if (moves.length === 0) return null;
+
+  let best: Move | null = null;
+  let bestScore = -Infinity;
+
+  for (const move of moves) {
+    const next = applyMove({ ...state, winner: null }, move);
+    if (next === state) continue;
+
+    const tigerOptions = tigerMoves({ ...next, turn: "TIGER" });
+    const capturesOffered = tigerOptions.filter((m) => m.kind === "JUMP").length;
+
+    const score =
+      -capturesOffered * 40 - tigerOptions.length + trappedTigerCount(next) * 30 + Math.random();
+
+    if (score > bestScore) {
+      bestScore = score;
+      best = move;
+    }
+  }
+
+  return best ?? moves[0];
+}
+
+export function chooseMoveFor(state: GameState, side: Side): Move | null {
+  return side === "TIGER" ? chooseTigerMove(state) : chooseGoatMove(state);
+}
+
+export type ScoreInput = {
   won: boolean;
   tigersTrapped: number;
   goatsRemaining: number;
   goatsCaptured: number;
-}): number {
+};
+
+/** Goat side: trapping tigers is the goal, losing goats is the cost. */
+export function scoreForGoat(input: ScoreInput): number {
   const winBonus = input.won ? 500 : 0;
   const trapPoints = Math.max(0, Math.min(TIGER_START.length, input.tigersTrapped)) * 60;
   const survivorPoints = Math.max(0, Math.min(TOTAL_GOATS, input.goatsRemaining)) * 10;
@@ -287,9 +321,33 @@ export function scoreFor(input: {
   return Math.max(0, winBonus + trapPoints + survivorPoints - lossPenalty);
 }
 
-export const MAX_POSSIBLE_SCORE = scoreFor({
-  won: true,
-  tigersTrapped: TIGER_START.length,
-  goatsRemaining: TOTAL_GOATS,
-  goatsCaptured: 0,
-});
+/**
+ * Tiger side: eating goats is the goal, getting cornered is the cost. Tuned so
+ * a perfect game is worth roughly the same as a perfect goat game (900 vs 940),
+ * otherwise one side would dominate a shared leaderboard.
+ */
+export function scoreForTiger(input: ScoreInput): number {
+  const winBonus = input.won ? 500 : 0;
+  const eatenPoints = Math.max(0, Math.min(GOATS_TO_LOSE, input.goatsCaptured)) * 80;
+  const corneredPenalty = Math.max(0, Math.min(TIGER_START.length, input.tigersTrapped)) * 40;
+  return Math.max(0, winBonus + eatenPoints - corneredPenalty);
+}
+
+export function scoreFor(input: ScoreInput, side: Side = "GOAT"): number {
+  return side === "TIGER" ? scoreForTiger(input) : scoreForGoat(input);
+}
+
+export const MAX_SCORE_BY_SIDE: Record<Side, number> = {
+  GOAT: scoreForGoat({
+    won: true,
+    tigersTrapped: TIGER_START.length,
+    goatsRemaining: TOTAL_GOATS,
+    goatsCaptured: 0,
+  }),
+  TIGER: scoreForTiger({
+    won: true,
+    tigersTrapped: 0,
+    goatsRemaining: TOTAL_GOATS - GOATS_TO_LOSE,
+    goatsCaptured: GOATS_TO_LOSE,
+  }),
+};

@@ -8,7 +8,7 @@ import {
   createGame,
   applyMove,
   legalMoves,
-  chooseTigerMove,
+  chooseMoveFor,
   neighbours,
   trappedTigerCount,
   goatsOnBoard,
@@ -19,6 +19,7 @@ import {
   GOATS_TO_LOSE,
   TIGER_START,
   type GameState,
+  type Side,
 } from "@/lib/games/baghchal";
 import { submitBaghChalScore, type SubmitScoreState } from "@/lib/actions/games";
 
@@ -43,65 +44,77 @@ const EDGES: Array<[number, number]> = (() => {
   return out;
 })();
 
+const opponentOf = (side: Side): Side => (side === "GOAT" ? "TIGER" : "GOAT");
+
 export function BaghChalBoard({ isLoggedIn }: { isLoggedIn: boolean }) {
   const router = useRouter();
+  const [side, setSide] = useState<Side | null>(null);
   const [state, setState] = useState<GameState>(createGame);
   const [selected, setSelected] = useState<number | null>(null);
-  const [status, setStatus] = useState<string>("Place a goat to begin.");
+  const [status, setStatus] = useState<string>("");
   const [result, setResult] = useState<SubmitScoreState | null>(null);
   const [isPending, startTransition] = useTransition();
 
-  const myMoves = useMemo(
-    () => (state.turn === "GOAT" && !state.winner ? legalMoves(state) : []),
-    [state]
-  );
+  const myTurn = side !== null && state.turn === side && !state.winner;
 
+  const myMoves = useMemo(() => (myTurn ? legalMoves(state) : []), [myTurn, state]);
   const placing = phase(state) === "PLACEMENT";
+  /** Only the goat side places; the tiger side always moves a piece. */
+  const isPlacingTurn = placing && side === "GOAT";
 
   const targetsFor = useCallback(
     (from: number) =>
-      myMoves.filter((m) => m.kind === "MOVE" && m.from === from).map((m) => m.to),
+      myMoves
+        .filter((m) => (m.kind === "MOVE" || m.kind === "JUMP") && m.from === from)
+        .map((m) => (m as { to: number }).to),
     [myMoves]
   );
 
-  // During placement every empty point is legal, so ringing them all is just
-  // noise — the empty dots already show where a goat can go. Highlights are
-  // only shown once they mean something: the chosen goat's destinations.
   const highlighted = useMemo<number[]>(() => {
-    if (state.winner || state.turn !== "GOAT" || placing) return [];
+    if (!myTurn || isPlacingTurn) return [];
     return selected === null ? [] : targetsFor(selected);
-  }, [state.winner, state.turn, placing, selected, targetsFor]);
+  }, [myTurn, isPlacingTurn, selected, targetsFor]);
 
-  const movableGoats = useMemo<number[]>(() => {
-    if (placing || state.winner || state.turn !== "GOAT") return [];
-    return [...new Set(myMoves.flatMap((m) => (m.kind === "MOVE" ? [m.from] : [])))];
-  }, [placing, state.winner, state.turn, myMoves]);
+  const movablePieces = useMemo<number[]>(() => {
+    if (!myTurn || isPlacingTurn) return [];
+    return [
+      ...new Set(
+        myMoves.flatMap((m) => (m.kind === "MOVE" || m.kind === "JUMP" ? [m.from] : []))
+      ),
+    ];
+  }, [myTurn, isPlacingTurn, myMoves]);
 
-  // Tigers reply on their own turn, after a short pause so the move is readable.
+  // The computer replies on its own turn, after a short pause so the move reads.
   useEffect(() => {
-    if (state.winner || state.turn !== "TIGER") return;
+    if (side === null || state.winner || state.turn === side) return;
+    const ai = opponentOf(side);
     const timer = setTimeout(() => {
-      const move = chooseTigerMove(state);
+      const move = chooseMoveFor(state, ai);
       if (!move) return;
       setState((current) => {
-        if (current.turn !== "TIGER" || current.winner) return current;
+        if (current.winner || current.turn === side) return current;
         const next = applyMove(current, move);
         setStatus(
           move.kind === "JUMP"
-            ? "A tiger ate one of your goats!"
-            : "A tiger moved. Your turn."
+            ? "A tiger ate a goat!"
+            : ai === "TIGER"
+              ? "A tiger moved. Your turn."
+              : move.kind === "PLACE"
+                ? "A goat was placed. Your turn."
+                : "A goat moved. Your turn."
         );
         return next;
       });
     }, 550);
     return () => clearTimeout(timer);
-  }, [state]);
+  }, [state, side]);
 
   // Report the finished game once.
   useEffect(() => {
-    if (!state.winner || result) return;
+    if (!state.winner || result || side === null) return;
     const outcome = {
-      won: state.winner === "GOAT",
+      side,
+      won: state.winner === side,
       drawn: state.winner === "DRAW",
       tigersTrapped: trappedTigerCount(state),
       goatsRemaining: goatsOnBoard(state),
@@ -112,33 +125,47 @@ export function BaghChalBoard({ isLoggedIn }: { isLoggedIn: boolean }) {
       setResult(res);
       if (res.saved) router.refresh();
     });
-  }, [state, result, router]);
+  }, [state, result, side, router]);
+
+  function start(chosen: Side) {
+    setSide(chosen);
+    setState(createGame());
+    setSelected(null);
+    setResult(null);
+    setStatus(
+      chosen === "GOAT"
+        ? "Place a goat to begin."
+        : "You're the tigers — the goats go first."
+    );
+  }
 
   function handlePoint(index: number) {
-    if (state.winner || state.turn !== "GOAT") return;
+    if (!myTurn) return;
 
-    if (placing) {
+    if (isPlacingTurn) {
       const move = myMoves.find((m) => m.kind === "PLACE" && m.to === index);
       if (move) {
         setState(applyMove(state, move));
-        setStatus("Goat placed. Tigers are thinking…");
+        setStatus("Goat placed. The tigers are thinking…");
       }
       return;
     }
 
     if (selected !== null) {
       const move = myMoves.find(
-        (m) => m.kind === "MOVE" && m.from === selected && m.to === index
+        (m) => (m.kind === "MOVE" || m.kind === "JUMP") && m.from === selected && m.to === index
       );
       if (move) {
         setState(applyMove(state, move));
         setSelected(null);
-        setStatus("Goat moved. Tigers are thinking…");
+        setStatus(
+          move.kind === "JUMP" ? "You ate a goat!" : "Moved. The computer is thinking…"
+        );
         return;
       }
     }
 
-    if (state.board[index] === "GOAT" && movableGoats.includes(index)) {
+    if (movablePieces.includes(index)) {
       setSelected(index === selected ? null : index);
       setStatus("Now tap where you'd like it to go.");
       return;
@@ -147,22 +174,80 @@ export function BaghChalBoard({ isLoggedIn }: { isLoggedIn: boolean }) {
     setSelected(null);
   }
 
-  function reset() {
-    setState(createGame());
-    setSelected(null);
-    setResult(null);
-    setStatus("Place a goat to begin.");
+  if (side === null) {
+    return (
+      <div className="rounded-lg border bg-card p-6">
+        <h2 className="font-semibold text-foreground">Choose your side</h2>
+        <p className="mt-1 text-sm text-muted-foreground">
+          The computer plays the other one.
+        </p>
+        <div className="mt-4 grid gap-3 sm:grid-cols-2">
+          <button
+            type="button"
+            onClick={() => start("GOAT")}
+            className="rounded-lg border p-4 text-left transition-all hover:border-primary active:scale-[0.98]"
+          >
+            <span className="text-2xl" aria-hidden="true">
+              🐐
+            </span>
+            <p className="mt-2 font-semibold text-foreground">Play as the Goats</p>
+            <p className="mt-1 text-sm text-muted-foreground">
+              Place {TOTAL_GOATS} goats and surround every tiger. The classic challenge.
+            </p>
+          </button>
+          <button
+            type="button"
+            onClick={() => start("TIGER")}
+            className="rounded-lg border p-4 text-left transition-all hover:border-primary active:scale-[0.98]"
+          >
+            <span className="text-2xl" aria-hidden="true">
+              🐯
+            </span>
+            <p className="mt-2 font-semibold text-foreground">Play as the Tigers</p>
+            <p className="mt-1 text-sm text-muted-foreground">
+              Hunt down {GOATS_TO_LOSE} goats by jumping them — before you get cornered.
+            </p>
+          </button>
+        </div>
+      </div>
+    );
   }
 
-  const liveScore = scoreFor({
-    won: state.winner === "GOAT",
-    tigersTrapped: trappedTigerCount(state),
-    goatsRemaining: goatsOnBoard(state),
-    goatsCaptured: state.goatsCaptured,
-  });
+  const liveScore = scoreFor(
+    {
+      won: state.winner === side,
+      tigersTrapped: trappedTigerCount(state),
+      goatsRemaining: goatsOnBoard(state),
+      goatsCaptured: state.goatsCaptured,
+    },
+    side
+  );
+
+  const outcomeText =
+    state.winner === "DRAW"
+      ? "Draw — neither side could make progress."
+      : state.winner === side
+        ? side === "GOAT"
+          ? "🎉 You win! Every tiger is trapped."
+          : `🎉 You win! You ate ${GOATS_TO_LOSE} goats.`
+        : side === "GOAT"
+          ? `The tigers ate ${GOATS_TO_LOSE} goats — they win this time.`
+          : "Your tigers are all trapped — the goats win this time.";
 
   return (
     <div className="space-y-4">
+      <div className="flex items-center justify-between rounded-lg border bg-card px-3 py-2">
+        <p className="text-sm text-muted-foreground">
+          Playing as{" "}
+          <strong className="text-foreground">
+            {side === "GOAT" ? "🐐 the Goats" : "🐯 the Tigers"}
+          </strong>
+        </p>
+        <Button variant="ghost" size="sm" onClick={() => setSide(null)}>
+          Switch side
+        </Button>
+      </div>
+
       <div className="grid grid-cols-3 gap-2 text-center">
         <Stat label="Goats left to place" value={state.goatsToPlace} />
         <Stat label="Goats eaten" value={`${state.goatsCaptured} / ${GOATS_TO_LOSE}`} />
@@ -187,7 +272,7 @@ export function BaghChalBoard({ isLoggedIn }: { isLoggedIn: boolean }) {
           {state.board.map((cell, i) => {
             const isTarget = highlighted.includes(i);
             const isSelected = selected === i;
-            const canPick = movableGoats.includes(i);
+            const canPick = movablePieces.includes(i);
             return (
               <g key={i} onClick={() => handlePoint(i)} className="cursor-pointer">
                 {/* Generous invisible tap area for phones. */}
@@ -199,7 +284,19 @@ export function BaghChalBoard({ isLoggedIn }: { isLoggedIn: boolean }) {
                   <circle cx={xOf(i)} cy={yOf(i)} r={1.6} className="fill-muted-foreground/60" />
                 ) : cell === "TIGER" ? (
                   <g>
-                    <circle cx={xOf(i)} cy={yOf(i)} r={4.6} className="fill-brand-crimson" />
+                    <circle
+                      cx={xOf(i)}
+                      cy={yOf(i)}
+                      r={4.6}
+                      className={
+                        isSelected
+                          ? "fill-brand-crimson stroke-foreground"
+                          : canPick
+                            ? "fill-brand-crimson stroke-primary"
+                            : "fill-brand-crimson stroke-transparent"
+                      }
+                      strokeWidth={0.6}
+                    />
                     <text
                       x={xOf(i)}
                       y={yOf(i) + 1.9}
@@ -245,22 +342,13 @@ export function BaghChalBoard({ isLoggedIn }: { isLoggedIn: boolean }) {
       <div className="rounded-lg border bg-card p-4">
         {state.winner ? (
           <div>
-            <p className="font-semibold text-foreground">
-              {state.winner === "GOAT"
-                ? "🎉 You win! Every tiger is trapped."
-                : state.winner === "TIGER"
-                  ? `The tigers ate ${GOATS_TO_LOSE} goats — they win this time.`
-                  : "Draw — neither side could make progress."}
-            </p>
+            <p className="font-semibold text-foreground">{outcomeText}</p>
             <p className="mt-1 text-muted-foreground">
               You scored <strong className="text-foreground">{result?.score ?? liveScore}</strong> points.
             </p>
 
             {isPending && <p className="mt-2 text-sm text-muted-foreground">Saving…</p>}
-
-            {result?.saved && (
-              <p className="mt-2 text-sm text-primary">Added to the leaderboard.</p>
-            )}
+            {result?.saved && <p className="mt-2 text-sm text-primary">Added to the leaderboard.</p>}
 
             {result?.needsAccount && (
               <div className="mt-3 rounded-md bg-primary/10 p-3">
@@ -281,21 +369,26 @@ export function BaghChalBoard({ isLoggedIn }: { isLoggedIn: boolean }) {
               <p className="mt-2 text-sm text-destructive">{result.message}</p>
             )}
 
-            <Button className="mt-4" onClick={reset}>
-              Play again
-            </Button>
+            <div className="mt-4 flex gap-2">
+              <Button onClick={() => start(side)}>Play again</Button>
+              <Button variant="outline" onClick={() => setSide(null)}>
+                Change side
+              </Button>
+            </div>
           </div>
         ) : (
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div>
               <p className="font-medium text-foreground">{status}</p>
               <p className="mt-0.5 text-sm text-muted-foreground">
-                {placing
-                  ? `You're the goats — tap an empty point to place one. ${state.goatsToPlace} of ${TOTAL_GOATS} left.`
-                  : "Tap one of your goats, then tap where to move it."}
+                {isPlacingTurn
+                  ? `Tap an empty point to place a goat. ${state.goatsToPlace} of ${TOTAL_GOATS} left.`
+                  : myTurn
+                    ? `Tap one of your ${side === "GOAT" ? "goats" : "tigers"}, then tap where to move it.`
+                    : "The computer is thinking…"}
               </p>
             </div>
-            <Button variant="outline" size="sm" onClick={reset}>
+            <Button variant="outline" size="sm" onClick={() => start(side)}>
               Restart
             </Button>
           </div>

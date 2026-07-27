@@ -222,6 +222,7 @@ model Article {
 model GameScore {
   id        String   @id @default(cuid())
   game      String   @default("BAGH_CHAL")
+  side      String   @default("GOAT")
   userId    String
   score     Int
   won       Boolean  @default(false)

@@ -35,9 +35,9 @@ export default async function BaghChalPage() {
           Bagh-Chal <span className="font-nepali text-2xl text-muted-foreground">बाघचाल</span>
         </h1>
         <p className="mt-2 max-w-2xl text-muted-foreground">
-          The traditional Nepali game of Tigers and Goats. You play the goats against
-          the computer&apos;s four tigers — surround them so they can&apos;t move, and
-          don&apos;t lose {GOATS_TO_LOSE} goats along the way.
+          The traditional Nepali game of Tigers and Goats. Play either side against the
+          computer — as the goats, surround all four tigers so they can&apos;t move; as
+          the tigers, hunt down {GOATS_TO_LOSE} goats before you get cornered.
         </p>
 
         <div className="mt-8 grid gap-8 lg:grid-cols-[minmax(0,1fr)_320px]">
@@ -48,27 +48,28 @@ export default async function BaghChalPage() {
               <h2 className="font-semibold text-foreground">How to play</h2>
               <ul className="mt-2 space-y-1.5 text-sm text-muted-foreground">
                 <li>
-                  You place {TOTAL_GOATS} goats, one per turn. The tigers move between
-                  turns.
+                  The goat side places {TOTAL_GOATS} goats, one per turn, while the tigers
+                  move between turns. Once every goat is down, both sides move one piece
+                  per turn along any line.
                 </li>
                 <li>
-                  Once all your goats are placed, you move one goat per turn along any
-                  line.
+                  A tiger eats a goat by jumping straight over it onto an empty point — so
+                  a goat with a gap directly behind it is in danger.
                 </li>
                 <li>
-                  A tiger eats a goat by jumping straight over it onto an empty point —
-                  so avoid leaving a goat with a gap directly behind it.
+                  <strong className="text-foreground">Playing the goats:</strong> win by
+                  blocking all four tigers so none can move. You lose if {GOATS_TO_LOSE}{" "}
+                  goats are eaten.
                 </li>
                 <li>
-                  <strong className="text-foreground">You win</strong> by blocking all
-                  four tigers so none can move.{" "}
-                  <strong className="text-foreground">You lose</strong> if the tigers eat{" "}
-                  {GOATS_TO_LOSE} goats.
+                  <strong className="text-foreground">Playing the tigers:</strong> win by
+                  eating {GOATS_TO_LOSE} goats. You lose if the goats corner every tiger.
                 </li>
               </ul>
               <p className="mt-3 text-xs text-muted-foreground">
-                Scoring: 500 for a win, 60 per trapped tiger, 10 per surviving goat, minus
-                15 per goat eaten.
+                Scoring — goats: 500 for a win, 60 per trapped tiger, 10 per surviving
+                goat, minus 15 per goat eaten. Tigers: 500 for a win, 80 per goat eaten,
+                minus 40 per tiger cornered.
               </p>
             </div>
           </div>
@@ -96,6 +97,9 @@ export default async function BaghChalPage() {
                         <AvatarFallback>{row.name.charAt(0).toUpperCase()}</AvatarFallback>
                       </Avatar>
                       <span className="min-w-0 flex-1 truncate text-sm text-foreground">
+                        <span title={row.side === "TIGER" ? "Played as the tigers" : "Played as the goats"}>
+                          {row.side === "TIGER" ? "🐯" : "🐐"}
+                        </span>{" "}
                         {row.name}
                         {row.won && <span title="Won a game"> 🏆</span>}
                       </span>

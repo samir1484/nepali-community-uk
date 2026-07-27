@@ -9,7 +9,7 @@ import {
   TIGER_START,
   TOTAL_GOATS,
   GOATS_TO_LOSE,
-  MAX_POSSIBLE_SCORE,
+  MAX_SCORE_BY_SIDE,
   GAME_BAGH_CHAL,
 } from "@/lib/games/baghchal";
 
@@ -22,6 +22,7 @@ import {
  * game, but this stops trivial tampering.
  */
 const resultSchema = z.object({
+  side: z.enum(["GOAT", "TIGER"]),
   won: z.coerce.boolean(),
   drawn: z.coerce.boolean(),
   tigersTrapped: z.coerce.number().int().min(0).max(TIGER_START.length),
@@ -36,7 +37,10 @@ export type SubmitScoreState = {
   message: string;
 };
 
+const INVALID = "That game result didn't look valid.";
+
 export async function submitBaghChalScore(input: {
+  side: "GOAT" | "TIGER";
   won: boolean;
   drawn: boolean;
   tigersTrapped: number;
@@ -44,29 +48,27 @@ export async function submitBaghChalScore(input: {
   goatsCaptured: number;
 }): Promise<SubmitScoreState> {
   const parsed = resultSchema.safeParse(input);
-  if (!parsed.success) {
-    return { saved: false, message: "That game result didn't look valid." };
-  }
+  if (!parsed.success) return { saved: false, message: INVALID };
 
-  const { won, drawn, tigersTrapped, goatsRemaining, goatsCaptured } = parsed.data;
+  const { side, won, drawn, tigersTrapped, goatsRemaining, goatsCaptured } = parsed.data;
 
-  // Cross-checks: a win means every tiger was trapped and fewer than the losing
-  // number of goats were eaten. Rejecting the impossible combinations closes the
-  // obvious way to fake a high score.
-  if (won && (tigersTrapped !== TIGER_START.length || goatsCaptured >= GOATS_TO_LOSE)) {
-    return { saved: false, message: "That game result didn't look valid." };
-  }
-  if (won && drawn) {
-    return { saved: false, message: "That game result didn't look valid." };
-  }
+  if (won && drawn) return { saved: false, message: INVALID };
   if (goatsRemaining + goatsCaptured > TOTAL_GOATS) {
-    return { saved: false, message: "That game result didn't look valid." };
+    return { saved: false, message: INVALID };
   }
 
-  const score = scoreFor({ won, tigersTrapped, goatsRemaining, goatsCaptured });
-  if (score > MAX_POSSIBLE_SCORE) {
-    return { saved: false, message: "That game result didn't look valid." };
+  // Each side wins a different way, so a claimed win has to match that side's
+  // actual victory condition.
+  if (won) {
+    const goatWinValid = tigersTrapped === TIGER_START.length && goatsCaptured < GOATS_TO_LOSE;
+    const tigerWinValid = goatsCaptured === GOATS_TO_LOSE;
+    if (side === "GOAT" ? !goatWinValid : !tigerWinValid) {
+      return { saved: false, message: INVALID };
+    }
   }
+
+  const score = scoreFor({ won, tigersTrapped, goatsRemaining, goatsCaptured }, side);
+  if (score > MAX_SCORE_BY_SIDE[side]) return { saved: false, message: INVALID };
 
   const session = await auth();
   if (!session?.user?.id) {
@@ -82,6 +84,7 @@ export async function submitBaghChalScore(input: {
   await db.gameScore.create({
     data: {
       game: GAME_BAGH_CHAL,
+      side,
       userId: session.user.id,
       score,
       won,
@@ -102,12 +105,13 @@ export type LeaderboardRow = {
   image: string | null;
   score: number;
   won: boolean;
+  side: string;
   playedAt: Date;
 };
 
 /**
- * One row per player — their personal best — so a single keen player can't fill
- * the whole table.
+ * One row per player — their personal best across either side — so a single
+ * keen player can't fill the whole table.
  */
 export async function getBaghChalLeaderboard(limit = 20): Promise<LeaderboardRow[]> {
   const scores = await db.gameScore.findMany({
@@ -116,6 +120,7 @@ export async function getBaghChalLeaderboard(limit = 20): Promise<LeaderboardRow
     select: {
       score: true,
       won: true,
+      side: true,
       createdAt: true,
       userId: true,
       user: { select: { name: true, image: true } },
@@ -137,6 +142,7 @@ export async function getBaghChalLeaderboard(limit = 20): Promise<LeaderboardRow
       image: row.user.image,
       score: row.score,
       won: row.won,
+      side: row.side,
       playedAt: row.createdAt,
     }));
 }
