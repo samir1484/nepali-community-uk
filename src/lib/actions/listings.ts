@@ -70,6 +70,7 @@ export async function createListing(
     title: formData.get("title"),
     description: formData.get("description"),
     location: formData.get("location"),
+    externalUrl: formData.get("externalUrl"),
   });
   if (!base.success) {
     return {
@@ -101,6 +102,7 @@ export async function createListing(
       location: base.data.location,
       details: detailsParsed.data,
       images,
+      externalUrl: base.data.externalUrl || null,
       status,
       authorId: session.user.id,
     },

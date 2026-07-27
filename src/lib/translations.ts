@@ -10,6 +10,8 @@ export const np = {
   about: "बारेमा",
   contact: "सम्पर्क",
   founder: "संस्थापक",
+  news: "समाचार",
+  advertise: "विज्ञापन",
 
   // Homepage
   heroHeadline: "नेपाली समुदायको लागि बेलायतको सबैभन्दा ठूलो डिजिटल प्लेटफर्म",
@@ -23,4 +25,6 @@ export const np = {
   eventsHeading: "कार्यक्रमहरू",
   volunteerHeading: "स्वयंसेवा अवसरहरू",
   businessHeading: "व्यापार निर्देशिका",
+  newsHeading: "समाचार तथा ब्लग",
+  advertiseHeading: "हामीसँग विज्ञापन गर्नुहोस्",
 } as const;

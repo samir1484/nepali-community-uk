@@ -7,11 +7,27 @@ export const JOB_TYPES = ["FULL_TIME", "PART_TIME", "CONTRACT", "TEMPORARY", "IN
 export const ROOM_TYPES = ["SINGLE", "SHARED", "STUDIO", "WHOLE_PROPERTY"] as const;
 export const RENT_PERIODS = ["WEEKLY", "MONTHLY"] as const;
 
+/**
+ * Only http(s) links are accepted anywhere a member can submit a URL — this is
+ * what stops a `javascript:` or `data:` URL being saved and later rendered as a
+ * clickable link.
+ */
+export const externalUrlSchema = z
+  .string()
+  .trim()
+  .refine(
+    (v) => v === "" || /^https?:\/\/[^\s]+\.[^\s]+/i.test(v),
+    "Enter a valid link starting with http:// or https://"
+  )
+  .optional()
+  .or(z.literal(""));
+
 export const listingBaseSchema = z.object({
   type: z.enum(LISTING_TYPES),
   title: z.string().trim().min(3, "Title is required"),
   description: z.string().trim().min(20, "Description must be at least 20 characters"),
   location: z.string().trim().min(2, "Location is required"),
+  externalUrl: externalUrlSchema,
 });
 
 export const jobDetailsSchema = z.object({
@@ -109,6 +125,31 @@ const TYPE_PLURAL_LABELS: Record<ListingTypeValue, string> = {
 
 export function typePluralLabel(type: ListingTypeValue): string {
   return TYPE_PLURAL_LABELS[type];
+}
+
+/** What the shared `externalUrl` field is actually for, per listing type. */
+const TYPE_URL_LABELS: Record<ListingTypeValue, string> = {
+  JOB: "Application link",
+  ROOM: "Listing link",
+  EVENT: "More info link",
+  VOLUNTEER: "Sign-up link",
+  BUSINESS: "Booking or menu link",
+};
+
+export function typeUrlLabel(type: ListingTypeValue): string {
+  return TYPE_URL_LABELS[type];
+}
+
+const TYPE_URL_CTA: Record<ListingTypeValue, string> = {
+  JOB: "Apply online",
+  ROOM: "View listing",
+  EVENT: "More information",
+  VOLUNTEER: "Sign up",
+  BUSINESS: "Visit link",
+};
+
+export function typeUrlCta(type: ListingTypeValue): string {
+  return TYPE_URL_CTA[type];
 }
 
 const TYPE_BACKGROUND_IMAGES: Record<ListingTypeValue, string> = {

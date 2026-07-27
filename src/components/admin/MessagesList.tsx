@@ -6,6 +6,18 @@ import { typeToPath } from "@/lib/validation/listings";
 
 type MessageWithListing = ContactMessage & { listing: Listing | null };
 
+const SOURCE_LABELS: Record<ContactMessage["source"], string> = {
+  CONTACT_FORM: "Contact form",
+  LISTING_INQUIRY: "Listing inquiry",
+  ADVERTISING: "Advertising enquiry",
+};
+
+const SOURCE_VARIANTS: Record<ContactMessage["source"], "secondary" | "default" | "outline"> = {
+  CONTACT_FORM: "secondary",
+  LISTING_INQUIRY: "default",
+  ADVERTISING: "outline",
+};
+
 export function MessagesList({ messages }: { messages: MessageWithListing[] }) {
   if (messages.length === 0) {
     return <p className="text-sm text-muted-foreground">No messages yet.</p>;
@@ -18,9 +30,7 @@ export function MessagesList({ messages }: { messages: MessageWithListing[] }) {
           <div className="flex flex-wrap items-start justify-between gap-3">
             <div className="min-w-0">
               <div className="flex flex-wrap items-center gap-2">
-                <Badge variant={msg.source === "CONTACT_FORM" ? "secondary" : "default"}>
-                  {msg.source === "CONTACT_FORM" ? "Contact form" : "Listing inquiry"}
-                </Badge>
+                <Badge variant={SOURCE_VARIANTS[msg.source]}>{SOURCE_LABELS[msg.source]}</Badge>
                 <span className="text-xs text-muted-foreground">
                   {msg.createdAt.toLocaleDateString("en-GB")}
                 </span>

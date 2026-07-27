@@ -64,6 +64,7 @@ model User {
   sessions          Session[]
   listings          Listing[]
   notificationLogs  NotificationLog[]
+  articles          Article[]
 
   @@map("users")
 }
@@ -160,6 +161,7 @@ model Listing {
   status      ModerationStatus @default(PENDING)
   details     Json             @default("{}")
   images      String[]         @default([])
+  externalUrl String?
   authorId    String
   createdAt   DateTime         @default(now())
   updatedAt   DateTime         @updatedAt
@@ -185,9 +187,41 @@ model NotificationLog {
   @@map("notification_logs")
 }
 
+enum ArticleStatus {
+  DRAFT
+  PUBLISHED
+}
+
+enum ArticleCategory {
+  NEWS
+  BLOG
+}
+
+model Article {
+  id          String          @id @default(cuid())
+  slug        String          @unique
+  title       String
+  excerpt     String
+  content     String
+  category    ArticleCategory @default(NEWS)
+  coverImage  String?
+  externalUrl String?
+  status      ArticleStatus   @default(DRAFT)
+  publishedAt DateTime?
+  authorId    String?
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+
+  author User? @relation(fields: [authorId], references: [id], onDelete: SetNull)
+
+  @@index([status, publishedAt])
+  @@map("articles")
+}
+
 enum ContactSource {
   CONTACT_FORM
   LISTING_INQUIRY
+  ADVERTISING
 }
 
 model ContactMessage {

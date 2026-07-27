@@ -3,7 +3,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { db } from "@/lib/db";
 import { formatListingDetailRows, mapsEmbedUrl, mapsSearchUrl } from "@/lib/listings";
-import { typePluralLabel, typeToPath, type ListingTypeValue } from "@/lib/validation/listings";
+import { typePluralLabel, typeToPath, typeUrlCta, type ListingTypeValue } from "@/lib/validation/listings";
 import type { JobDetails, EventDetails } from "@/lib/validation/listings";
 import { Button } from "@/components/ui/button";
 import { ContactPosterForm } from "@/components/listings/ContactPosterForm";
@@ -59,8 +59,23 @@ export async function ListingDetailView({ type, id }: { type: ListingTypeValue; 
           className="mt-4"
           nativeButton={false}
           render={
-            <a href={ticketUrl} target="_blank" rel="noopener noreferrer">
+            <a href={ticketUrl} target="_blank" rel="noopener noreferrer nofollow ugc">
               Get Tickets
+            </a>
+          }
+        />
+      )}
+
+      {listing.externalUrl && (
+        <Button
+          className="mt-4 ml-2"
+          variant="outline"
+          nativeButton={false}
+          render={
+            // rel="nofollow ugc" on member-submitted links: they're user-generated
+            // content, so they must not pass this site's ranking signal onward.
+            <a href={listing.externalUrl} target="_blank" rel="noopener noreferrer nofollow ugc">
+              {typeUrlCta(type)}
             </a>
           }
         />

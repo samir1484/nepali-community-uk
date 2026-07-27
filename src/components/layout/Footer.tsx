@@ -10,9 +10,10 @@ const COMMUNITY_LINKS = [
   { href: "/events", label: "Events", labelNp: np.events },
   { href: "/volunteer", label: "Volunteer", labelNp: np.volunteer },
   { href: "/businesses", label: "Business Directory", labelNp: np.business },
+  { href: "/news", label: "News & Blog", labelNp: np.news },
 ];
 
-const COMING_SOON = ["Blogs", "Community News", "Immigration Resources", "Student Support"];
+const COMING_SOON = ["Immigration Resources", "Student Support"];
 
 export async function Footer() {
   const socialLinks = await db.socialLink.findMany({
@@ -58,6 +59,12 @@ export async function Footer() {
               <li>
                 <Link href="/contact" className="hover:underline">
                   Contact <span className="font-nepali text-xs text-secondary-foreground/70">{np.contact}</span>
+                </Link>
+              </li>
+              <li>
+                <Link href="/advertise" className="hover:underline">
+                  Advertise with us{" "}
+                  <span className="font-nepali text-xs text-secondary-foreground/70">{np.advertise}</span>
                 </Link>
               </li>
             </ul>

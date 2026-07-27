@@ -12,6 +12,8 @@ const STATIC_ROUTES = [
   { path: "/events", priority: 0.9, changeFrequency: "daily" as const },
   { path: "/businesses", priority: 0.9, changeFrequency: "weekly" as const },
   { path: "/volunteer", priority: 0.8, changeFrequency: "weekly" as const },
+  { path: "/news", priority: 0.9, changeFrequency: "daily" as const },
+  { path: "/advertise", priority: 0.7, changeFrequency: "monthly" as const },
   { path: "/about", priority: 0.7, changeFrequency: "monthly" as const },
   { path: "/founder", priority: 0.6, changeFrequency: "monthly" as const },
   { path: "/contact", priority: 0.6, changeFrequency: "monthly" as const },
@@ -46,5 +48,23 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // the static routes so crawlers get something useful.
   }
 
-  return [...staticEntries, ...listingEntries];
+  let articleEntries: MetadataRoute.Sitemap = [];
+  try {
+    const articles = await db.article.findMany({
+      where: { status: "PUBLISHED" },
+      select: { slug: true, updatedAt: true },
+      orderBy: { publishedAt: "desc" },
+      take: 1000,
+    });
+    articleEntries = articles.map((article) => ({
+      url: `${SITE_URL}/news/${article.slug}`,
+      lastModified: article.updatedAt,
+      changeFrequency: "monthly" as const,
+      priority: 0.8,
+    }));
+  } catch {
+    // Same reasoning as above — degrade to the routes we can still list.
+  }
+
+  return [...staticEntries, ...listingEntries, ...articleEntries];
 }

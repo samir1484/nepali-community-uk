@@ -4,7 +4,14 @@ import { useActionState } from "react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { createListing, type ListingActionState } from "@/lib/actions/listings";
-import { JOB_TYPES, ROOM_TYPES, RENT_PERIODS, typeToPath, type ListingTypeValue } from "@/lib/validation/listings";
+import {
+  JOB_TYPES,
+  ROOM_TYPES,
+  RENT_PERIODS,
+  typeToPath,
+  typeUrlLabel,
+  type ListingTypeValue,
+} from "@/lib/validation/listings";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -97,6 +104,16 @@ export function ListingForm({ type }: { type: ListingTypeValue }) {
       <div className="space-y-2">
         <Label>Photos</Label>
         <ListingImageUploader value={images} onChange={setImages} />
+      </div>
+
+      <div className="space-y-2">
+        <Label htmlFor="externalUrl">{typeUrlLabel(type)} (optional)</Label>
+        <Input id="externalUrl" name="externalUrl" type="url" placeholder="https://" />
+        <p className="text-xs text-muted-foreground">
+          Link people to an external page — your own website, an application form, or a
+          booking page.
+        </p>
+        <FieldError errors={state.fieldErrors?.externalUrl} />
       </div>
 
       {type === "JOB" && (

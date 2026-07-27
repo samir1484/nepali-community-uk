@@ -10,6 +10,7 @@ export const NAV_LINKS = [
   { href: "/events", label: "Events", labelNp: np.events },
   { href: "/volunteer", label: "Volunteer", labelNp: np.volunteer },
   { href: "/businesses", label: "Businesses", labelNp: np.business },
+  { href: "/news", label: "News", labelNp: np.news },
   { href: "/about", label: "About", labelNp: np.about },
   { href: "/contact", label: "Contact", labelNp: np.contact },
 ];
@@ -23,7 +24,7 @@ export function Header() {
           <span className="text-lg font-bold text-foreground">Nepali Community UK</span>
         </Link>
 
-        <nav className="hidden items-center gap-3 lg:flex">
+        <nav className="hidden items-center gap-3 xl:flex">
           {NAV_LINKS.map((link) => (
             <Link
               key={link.href}
