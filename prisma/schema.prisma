@@ -65,6 +65,7 @@ model User {
   listings          Listing[]
   notificationLogs  NotificationLog[]
   articles          Article[]
+  gameScores        GameScore[]
 
   @@map("users")
 }
@@ -216,6 +217,25 @@ model Article {
 
   @@index([status, publishedAt])
   @@map("articles")
+}
+
+model GameScore {
+  id        String   @id @default(cuid())
+  game      String   @default("BAGH_CHAL")
+  userId    String
+  score     Int
+  won       Boolean  @default(false)
+  drawn     Boolean  @default(false)
+  tigersTrapped  Int @default(0)
+  goatsRemaining Int @default(0)
+  goatsCaptured  Int @default(0)
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([game, score])
+  @@index([userId])
+  @@map("game_scores")
 }
 
 enum ContactSource {
