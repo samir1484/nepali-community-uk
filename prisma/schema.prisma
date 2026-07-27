@@ -239,6 +239,16 @@ model GameScore {
   @@map("game_scores")
 }
 
+/** Backs the fixed-window rate limiter on public API routes. */
+model RateLimitEvent {
+  id        String   @id @default(cuid())
+  bucketKey String
+  createdAt DateTime @default(now())
+
+  @@index([bucketKey, createdAt])
+  @@map("rate_limit_events")
+}
+
 enum ContactSource {
   CONTACT_FORM
   LISTING_INQUIRY

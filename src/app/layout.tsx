@@ -5,6 +5,7 @@ import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { WhatsAppButton } from "@/components/layout/WhatsAppButton";
 import { GameButton } from "@/components/layout/GameButton";
+import { ChatWidget } from "@/components/chat/ChatWidget";
 import { SessionProvider } from "@/components/providers/SessionProvider";
 import { Toaster } from "@/components/ui/sonner";
 import { SITE_NAME, SITE_URL, DEFAULT_DESCRIPTION, DEFAULT_OG_IMAGE, absoluteUrl } from "@/lib/seo";
@@ -106,7 +107,10 @@ export default function RootLayout({
           <Footer />
           <WhatsAppButton />
           <GameButton />
-          <Toaster />
+          <ChatWidget />
+          {/* Top-centre because the chat panel now occupies the bottom-right,
+              where sonner would otherwise render toasts underneath it. */}
+          <Toaster position="top-center" />
         </SessionProvider>
       </body>
     </html>
