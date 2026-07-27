@@ -1,7 +1,8 @@
 import type { MetadataRoute } from "next";
 import { db } from "@/lib/db";
 import { SITE_URL } from "@/lib/seo";
-import { typeToPath } from "@/lib/validation/listings";
+import { typeToPath, LISTING_TYPES } from "@/lib/validation/listings";
+import { UK_LOCATIONS } from "@/lib/locations";
 
 export const revalidate = 3600;
 
@@ -66,5 +67,35 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // Same reasoning as above — degrade to the routes we can still list.
   }
 
-  return [...staticEntries, ...listingEntries, ...articleEntries];
+  // Only list location pages that actually have something on them. Empty ones
+  // are noindex (see lib/locationMetadata.ts), so submitting them here would
+  // just hand Google a pile of pages it's been told to ignore.
+  const locationEntries: MetadataRoute.Sitemap = [];
+  try {
+    const approved = await db.listing.findMany({
+      where: { status: "APPROVED" },
+      select: { type: true, location: true },
+    });
+
+    for (const type of LISTING_TYPES) {
+      for (const location of UK_LOCATIONS) {
+        const hasAny = approved.some(
+          (l) =>
+            l.type === type &&
+            l.location.toLowerCase().includes(location.match.toLowerCase())
+        );
+        if (!hasAny) continue;
+        locationEntries.push({
+          url: `${SITE_URL}/${typeToPath(type)}/in/${location.slug}`,
+          lastModified: new Date(),
+          changeFrequency: "daily" as const,
+          priority: 0.8,
+        });
+      }
+    }
+  } catch {
+    // Same reasoning as above — degrade rather than fail the whole sitemap.
+  }
+
+  return [...staticEntries, ...listingEntries, ...articleEntries, ...locationEntries];
 }

@@ -3,6 +3,7 @@ import { db } from "@/lib/db";
 import { Button } from "@/components/ui/button";
 import { ListingCard } from "@/components/listings/ListingCard";
 import { LocationFilter } from "@/components/listings/LocationFilter";
+import { LocationLinks } from "@/components/listings/LocationLinks";
 import { typeLabel, typeToPath, type ListingTypeValue } from "@/lib/validation/listings";
 import { np } from "@/lib/translations";
 import { PageBackground } from "@/components/layout/PageBackground";
@@ -99,6 +100,10 @@ export async function ListingsPage({
           ))}
         </div>
       )}
+
+      <div className="mt-12 border-t pt-8">
+        <LocationLinks type={type} />
+      </div>
     </div>
     </PageBackground>
   );
