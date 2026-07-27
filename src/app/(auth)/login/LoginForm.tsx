@@ -42,11 +42,17 @@ export function LoginForm() {
       )}
       <div className="space-y-2">
         <Label htmlFor="email">Email</Label>
-        <Input id="email" name="email" type="email" required />
+        <Input id="email" name="email" type="email" placeholder="you@example.com" required />
       </div>
       <div className="space-y-2">
         <Label htmlFor="password">Password</Label>
         <Input id="password" name="password" type="password" required />
+        {/* Members were typing their Gmail/Google password here, so spell out
+            which password this field actually wants. */}
+        <p className="text-xs text-muted-foreground">
+          The password you chose when you registered on this website — not your
+          email or Google password.
+        </p>
       </div>
       <Button type="submit" className="w-full" disabled={isPending}>
         {isPending ? "Logging in..." : "Log in"}

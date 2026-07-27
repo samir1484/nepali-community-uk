@@ -65,8 +65,14 @@ export function RegisterForm() {
           <FieldError errors={state.fieldErrors?.email} />
         </div>
         <div className="space-y-2">
-          <Label htmlFor="password">Password</Label>
+          <Label htmlFor="password">Create a password</Label>
           <Input id="password" name="password" type="password" required minLength={8} />
+          {/* Setting the expectation here is what stops people trying their
+              Google password on the login page later. */}
+          <p className="text-xs text-muted-foreground">
+            At least 8 characters. Make up a new password for this website — don&apos;t
+            reuse your email password.
+          </p>
           <FieldError errors={state.fieldErrors?.password} />
         </div>
         <div className="space-y-2">
