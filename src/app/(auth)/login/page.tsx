@@ -5,8 +5,9 @@ import { PageBackground } from "@/components/layout/PageBackground";
 import { getSiteImage } from "@/lib/settings";
 
 export const metadata: Metadata = {
-  title: "Log in | Nepali Community UK",
+  title: "Log in",
   description: "Log in to your Nepali Community UK account.",
+  alternates: { canonical: "/login" },
 };
 
 export default async function LoginPage() {

@@ -3,8 +3,11 @@ import { PageBackground } from "@/components/layout/PageBackground";
 import { getSiteImage } from "@/lib/settings";
 
 export const metadata: Metadata = {
-  title: "About | Nepali Community UK",
-  description: "Learn about the mission behind Nepali Community UK.",
+  title: "About Us",
+  description:
+    "Learn about the mission behind Nepali Community UK — connecting the Nepali diaspora across the United Kingdom through jobs, housing, events, businesses and volunteering.",
+  alternates: { canonical: "/about" },
+  openGraph: { title: "About Us | Nepali Community UK", url: "/about" },
 };
 
 export default async function AboutPage() {

@@ -9,6 +9,8 @@ import { Button } from "@/components/ui/button";
 import { ContactPosterForm } from "@/components/listings/ContactPosterForm";
 import { PageBackground } from "@/components/layout/PageBackground";
 import { getListingBackground } from "@/lib/settings";
+import { JsonLd } from "@/components/seo/JsonLd";
+import { listingJsonLd } from "@/lib/listingSchema";
 
 export async function ListingDetailView({ type, id }: { type: ListingTypeValue; id: string }) {
   const listing = await db.listing.findUnique({
@@ -29,6 +31,7 @@ export async function ListingDetailView({ type, id }: { type: ListingTypeValue; 
 
   return (
     <PageBackground image={backgroundImage}>
+    <JsonLd data={listingJsonLd(listing)} />
     <div className="mx-auto max-w-2xl px-4 py-16">
       <Link href={`/${typeToPath(type)}`} className="text-sm text-primary underline underline-offset-4">
         ← Back to {typePluralLabel(type)}
@@ -65,9 +68,14 @@ export async function ListingDetailView({ type, id }: { type: ListingTypeValue; 
 
       {listing.images.length > 0 && (
         <div className="mt-6 grid grid-cols-2 gap-2 sm:grid-cols-3">
-          {listing.images.map((url) => (
+          {listing.images.map((url, index) => (
             <div key={url} className="relative aspect-square overflow-hidden rounded-lg border">
-              <Image src={url} alt="" fill className="object-cover" />
+              <Image
+                src={url}
+                alt={`${listing.title} in ${listing.location} — photo ${index + 1}`}
+                fill
+                className="object-cover"
+              />
             </div>
           ))}
         </div>

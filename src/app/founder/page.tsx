@@ -5,8 +5,11 @@ import { PageBackground } from "@/components/layout/PageBackground";
 import { getSiteImage } from "@/lib/settings";
 
 export const metadata: Metadata = {
-  title: "Founder | Nepali Community UK",
-  description: "Meet Samir Khatiwada, founder of Nepali Community UK.",
+  title: "Our Founder — Samir Khatiwada",
+  description:
+    "Meet Samir Khatiwada, founder of Nepali Community UK, and the story behind building a platform to bring the Nepali diaspora across the UK closer together.",
+  alternates: { canonical: "/founder" },
+  openGraph: { title: "Our Founder — Samir Khatiwada | Nepali Community UK", url: "/founder" },
 };
 
 async function getFounderImageUrl(): Promise<string | null> {

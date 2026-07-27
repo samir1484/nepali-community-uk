@@ -29,7 +29,7 @@ export function ListingCard({
         {images[0] && (
           <Image
             src={images[0]}
-            alt=""
+            alt={`${title} in ${location}`}
             width={640}
             height={360}
             className="h-40 w-full object-cover"

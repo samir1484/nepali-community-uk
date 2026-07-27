@@ -4,8 +4,11 @@ import { PageBackground } from "@/components/layout/PageBackground";
 import { getSiteImage } from "@/lib/settings";
 
 export const metadata: Metadata = {
-  title: "Contact | Nepali Community UK",
-  description: "Get in touch with the Nepali Community UK team.",
+  title: "Contact Us",
+  description:
+    "Get in touch with the Nepali Community UK team — questions, partnership enquiries, or help with posting a job, room, event or business listing.",
+  alternates: { canonical: "/contact" },
+  openGraph: { title: "Contact Us | Nepali Community UK", url: "/contact" },
 };
 
 export default async function ContactPage() {

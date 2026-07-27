@@ -7,6 +7,11 @@ import { firstExistingPublicFile } from "@/lib/media";
 import { db } from "@/lib/db";
 import { AnimatedSection, StaggerContainer, StaggerItem } from "@/components/animation/AnimatedSection";
 import { np } from "@/lib/translations";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  alternates: { canonical: "/" },
+};
 
 export default async function Home() {
   const allSections = await db.homeSection.findMany({

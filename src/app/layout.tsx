@@ -6,6 +6,8 @@ import { Footer } from "@/components/layout/Footer";
 import { WhatsAppButton } from "@/components/layout/WhatsAppButton";
 import { SessionProvider } from "@/components/providers/SessionProvider";
 import { Toaster } from "@/components/ui/sonner";
+import { SITE_NAME, SITE_URL, DEFAULT_DESCRIPTION, DEFAULT_OG_IMAGE, absoluteUrl } from "@/lib/seo";
+import { JsonLd } from "@/components/seo/JsonLd";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -23,8 +25,44 @@ const notoSansDevanagari = Noto_Sans_Devanagari({
 });
 
 export const metadata: Metadata = {
-  title: "Nepali Community UK",
-  description: "The UK's largest digital platform for the Nepali community.",
+  metadataBase: new URL(SITE_URL),
+  title: {
+    default: `${SITE_NAME} — Nepali Jobs, Rooms, Events & Businesses in the UK`,
+    template: `%s | ${SITE_NAME}`,
+  },
+  description: DEFAULT_DESCRIPTION,
+  keywords: [
+    "Nepali community UK",
+    "Nepali jobs UK",
+    "Nepali rooms to rent",
+    "Nepali events UK",
+    "Nepali business directory",
+    "Nepali diaspora UK",
+    "Nepalese community United Kingdom",
+  ],
+  authors: [{ name: SITE_NAME }],
+  alternates: {
+    canonical: "/",
+  },
+  openGraph: {
+    type: "website",
+    locale: "en_GB",
+    url: SITE_URL,
+    siteName: SITE_NAME,
+    title: `${SITE_NAME} — Nepali Jobs, Rooms, Events & Businesses in the UK`,
+    description: DEFAULT_DESCRIPTION,
+    images: [{ url: DEFAULT_OG_IMAGE, width: 1600, height: 900, alt: SITE_NAME }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: `${SITE_NAME} — Nepali Jobs, Rooms, Events & Businesses in the UK`,
+    description: DEFAULT_DESCRIPTION,
+    images: [DEFAULT_OG_IMAGE],
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
 };
 
 export default function RootLayout({
@@ -38,6 +76,24 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} ${notoSansDevanagari.variable} h-full antialiased`}
     >
       <body className="flex min-h-full flex-col">
+        <JsonLd
+          data={{
+            "@context": "https://schema.org",
+            "@type": "Organization",
+            name: SITE_NAME,
+            url: SITE_URL,
+            logo: absoluteUrl("/logo.png"),
+            description: DEFAULT_DESCRIPTION,
+          }}
+        />
+        <JsonLd
+          data={{
+            "@context": "https://schema.org",
+            "@type": "WebSite",
+            name: SITE_NAME,
+            url: SITE_URL,
+          }}
+        />
         <SessionProvider>
           <Header />
           <main className="flex-1">{children}</main>

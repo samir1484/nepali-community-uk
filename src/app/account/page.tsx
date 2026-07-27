@@ -8,7 +8,10 @@ import { ProfileDetailsForm } from "@/components/account/ProfileDetailsForm";
 import { PageBackground } from "@/components/layout/PageBackground";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
-export const metadata: Metadata = { title: "My Account | Nepali Community UK" };
+export const metadata: Metadata = {
+  title: "My Account",
+  robots: { index: false, follow: false },
+};
 
 // Profile photo upload goes to Supabase Storage — safety margin against
 // Vercel's default function timeout on a cold start.

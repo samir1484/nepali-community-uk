@@ -4,8 +4,11 @@ import { PageBackground } from "@/components/layout/PageBackground";
 import { getSiteImage } from "@/lib/settings";
 
 export const metadata: Metadata = {
-  title: "Register | Nepali Community UK",
-  description: "Create your Nepali Community UK account.",
+  title: "Join the Community — Free Registration",
+  description:
+    "Create your free Nepali Community UK account to post jobs, rooms, events and businesses, and get email alerts when new listings match your interests.",
+  alternates: { canonical: "/register" },
+  openGraph: { title: "Join the Nepali Community UK", url: "/register" },
 };
 
 // Registration uploads a profile photo to Supabase Storage before responding,

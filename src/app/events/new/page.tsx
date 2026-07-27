@@ -5,7 +5,10 @@ import { ListingForm } from "@/components/listings/ListingForm";
 import { PageBackground } from "@/components/layout/PageBackground";
 import { getListingBackground } from "@/lib/settings";
 
-export const metadata: Metadata = { title: "Post an Event | Nepali Community UK" };
+export const metadata: Metadata = {
+  title: "Post an Event",
+  robots: { index: false, follow: true },
+};
 
 // Photo uploads go to Supabase Storage — safety margin against Vercel's
 // default function timeout on a cold start.
