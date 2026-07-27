@@ -63,6 +63,11 @@ export const metadata: Metadata = {
     index: true,
     follow: true,
   },
+  // Belt-and-braces alongside the DNS TXT record: keeps Search Console
+  // ownership verified even if the domain's DNS is changed later.
+  verification: {
+    google: "nfl7sZgX_8F_J8rKhjfrr5kBgKxMJEqwhfZe5_IJIA0",
+  },
 };
 
 export default function RootLayout({
