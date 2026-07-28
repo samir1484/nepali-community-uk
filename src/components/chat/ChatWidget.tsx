@@ -5,7 +5,7 @@ import { X, Send, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
-import { NepaliBoyAvatar } from "./NepaliBoyAvatar";
+import { ChatAvatar } from "./ChatAvatar";
 import type { ChatLanguage } from "@/lib/chat/language";
 
 type Turn = { role: "user" | "assistant"; content: string };
@@ -109,7 +109,7 @@ export function ChatWidget() {
         <div className="flex h-[30rem] w-[min(22rem,calc(100vw-3rem))] flex-col overflow-hidden rounded-xl border bg-card shadow-2xl">
           <div className="flex items-start justify-between gap-2 border-b bg-secondary/40 px-4 py-3">
             <div className="flex min-w-0 items-center gap-2.5">
-              <NepaliBoyAvatar className="size-9 shrink-0 rounded-full" />
+              <ChatAvatar px={36} className="size-9 shrink-0" />
               <div className="min-w-0">
                 <p className="truncate font-semibold text-foreground">{copy.title}</p>
                 <p className="mt-0.5 text-xs text-muted-foreground">{copy.subtitle}</p>
@@ -155,7 +155,7 @@ export function ChatWidget() {
                 </div>
               ) : (
                 <div key={index} className="flex items-end gap-2">
-                  <NepaliBoyAvatar className="size-7 shrink-0 rounded-full" />
+                  <ChatAvatar px={28} className="size-7 shrink-0" />
                   <div className="max-w-[85%] whitespace-pre-wrap rounded-lg bg-muted px-3 py-2 text-sm text-foreground">
                     {turn.content}
                   </div>
@@ -165,7 +165,7 @@ export function ChatWidget() {
 
             {isSending && (
               <div className="flex items-end gap-2">
-                <NepaliBoyAvatar className="size-7 shrink-0 rounded-full" />
+                <ChatAvatar px={28} className="size-7 shrink-0" />
                 <div className="flex items-center gap-2 rounded-lg bg-muted px-3 py-2 text-sm text-muted-foreground">
                   <Loader2 size={14} className="animate-spin" />
                   {language === "ne" ? "सोच्दै…" : "Thinking…"}
@@ -221,7 +221,7 @@ export function ChatWidget() {
           isOpen ? "bg-brand-crimson text-white" : "bg-[#f4ede3]"
         )}
       >
-        {isOpen ? <X size={24} /> : <NepaliBoyAvatar className="size-14" withBackground={false} />}
+        {isOpen ? <X size={24} /> : <ChatAvatar px={56} className="size-14" />}
       </button>
     </div>
   );
