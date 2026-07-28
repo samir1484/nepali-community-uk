@@ -1,10 +1,11 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { MessageCircle, X, Send, Loader2 } from "lucide-react";
+import { X, Send, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
+import { NepaliBoyAvatar } from "./NepaliBoyAvatar";
 import type { ChatLanguage } from "@/lib/chat/language";
 
 type Turn = { role: "user" | "assistant"; content: string };
@@ -107,9 +108,12 @@ export function ChatWidget() {
       {isOpen && (
         <div className="flex h-[30rem] w-[min(22rem,calc(100vw-3rem))] flex-col overflow-hidden rounded-xl border bg-card shadow-2xl">
           <div className="flex items-start justify-between gap-2 border-b bg-secondary/40 px-4 py-3">
-            <div className="min-w-0">
-              <p className="truncate font-semibold text-foreground">{copy.title}</p>
-              <p className="mt-0.5 text-xs text-muted-foreground">{copy.subtitle}</p>
+            <div className="flex min-w-0 items-center gap-2.5">
+              <NepaliBoyAvatar className="size-9 shrink-0 rounded-full" />
+              <div className="min-w-0">
+                <p className="truncate font-semibold text-foreground">{copy.title}</p>
+                <p className="mt-0.5 text-xs text-muted-foreground">{copy.subtitle}</p>
+              </div>
             </div>
             <button
               type="button"
@@ -141,24 +145,31 @@ export function ChatWidget() {
           </div>
 
           <div ref={scrollRef} className="flex-1 space-y-3 overflow-y-auto px-3 py-3">
-            {turns.map((turn, index) => (
-              <div
-                key={index}
-                className={cn(
-                  "max-w-[85%] whitespace-pre-wrap rounded-lg px-3 py-2 text-sm",
-                  turn.role === "user"
-                    ? "ml-auto bg-primary text-primary-foreground"
-                    : "bg-muted text-foreground"
-                )}
-              >
-                {turn.content}
-              </div>
-            ))}
+            {turns.map((turn, index) =>
+              turn.role === "user" ? (
+                <div
+                  key={index}
+                  className="ml-auto max-w-[85%] whitespace-pre-wrap rounded-lg bg-primary px-3 py-2 text-sm text-primary-foreground"
+                >
+                  {turn.content}
+                </div>
+              ) : (
+                <div key={index} className="flex items-end gap-2">
+                  <NepaliBoyAvatar className="size-7 shrink-0 rounded-full" />
+                  <div className="max-w-[85%] whitespace-pre-wrap rounded-lg bg-muted px-3 py-2 text-sm text-foreground">
+                    {turn.content}
+                  </div>
+                </div>
+              )
+            )}
 
             {isSending && (
-              <div className="flex items-center gap-2 rounded-lg bg-muted px-3 py-2 text-sm text-muted-foreground">
-                <Loader2 size={14} className="animate-spin" />
-                {language === "ne" ? "सोच्दै…" : "Thinking…"}
+              <div className="flex items-end gap-2">
+                <NepaliBoyAvatar className="size-7 shrink-0 rounded-full" />
+                <div className="flex items-center gap-2 rounded-lg bg-muted px-3 py-2 text-sm text-muted-foreground">
+                  <Loader2 size={14} className="animate-spin" />
+                  {language === "ne" ? "सोच्दै…" : "Thinking…"}
+                </div>
               </div>
             )}
 
@@ -205,9 +216,12 @@ export function ChatWidget() {
         onClick={() => (isOpen ? setIsOpen(false) : open())}
         aria-label={isOpen ? "Close community assistant" : "Open community assistant"}
         aria-expanded={isOpen}
-        className="flex h-14 w-14 items-center justify-center rounded-full bg-brand-crimson text-white shadow-lg transition-transform duration-300 hover:scale-105 active:scale-95"
+        className={cn(
+          "flex h-14 w-14 items-center justify-center overflow-hidden rounded-full shadow-lg ring-2 ring-brand-crimson transition-transform duration-300 hover:scale-105 active:scale-95",
+          isOpen ? "bg-brand-crimson text-white" : "bg-[#f4ede3]"
+        )}
       >
-        {isOpen ? <X size={24} /> : <MessageCircle size={24} />}
+        {isOpen ? <X size={24} /> : <NepaliBoyAvatar className="size-14" withBackground={false} />}
       </button>
     </div>
   );
