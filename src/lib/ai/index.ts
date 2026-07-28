@@ -2,6 +2,7 @@ import "server-only";
 import { AnthropicProvider } from "./anthropic-provider";
 import { OpenAIProvider } from "./openai-provider";
 import { GeminiProvider } from "./gemini-provider";
+import { GroqProvider } from "./groq-provider";
 import type { AIProvider } from "./types";
 
 let cachedProvider: AIProvider | null = null;
@@ -17,7 +18,9 @@ export function getAIProvider(): AIProvider {
   if (cachedProvider) return cachedProvider;
 
   const providerName = process.env.AI_PROVIDER;
-  if (providerName === "gemini") {
+  if (providerName === "groq") {
+    cachedProvider = new GroqProvider();
+  } else if (providerName === "gemini") {
     cachedProvider = new GeminiProvider();
   } else if (providerName === "anthropic") {
     cachedProvider = new AnthropicProvider();
@@ -25,7 +28,7 @@ export function getAIProvider(): AIProvider {
     cachedProvider = new OpenAIProvider();
   } else {
     throw new Error(
-      `AI_PROVIDER must be "gemini", "anthropic" or "openai", got: ${providerName ?? "(unset)"}`
+      `AI_PROVIDER must be "groq", "gemini", "anthropic" or "openai", got: ${providerName ?? "(unset)"}`
     );
   }
 
