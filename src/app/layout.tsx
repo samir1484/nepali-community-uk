@@ -6,6 +6,7 @@ import { Footer } from "@/components/layout/Footer";
 import { WhatsAppButton } from "@/components/layout/WhatsAppButton";
 import { GameButton } from "@/components/layout/GameButton";
 import { ChatWidget } from "@/components/chat/ChatWidget";
+import { getSiteImage } from "@/lib/settings";
 import { SessionProvider } from "@/components/providers/SessionProvider";
 import { Toaster } from "@/components/ui/sonner";
 import { SITE_NAME, SITE_URL, DEFAULT_DESCRIPTION, DEFAULT_OG_IMAGE, absoluteUrl } from "@/lib/seo";
@@ -72,11 +73,14 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  // Admin-editable from Settings, falling back to the bundled photo.
+  const chatAvatar = await getSiteImage("chat.avatar.image", "/images/chat/assistant.png");
+
   return (
     <html
       lang="en"
@@ -107,7 +111,7 @@ export default function RootLayout({
           <Footer />
           <WhatsAppButton />
           <GameButton />
-          <ChatWidget />
+          <ChatWidget avatarSrc={chatAvatar} />
           {/* Top-centre because the chat panel now occupies the bottom-right,
               where sonner would otherwise render toasts underneath it. */}
           <Toaster position="top-center" />

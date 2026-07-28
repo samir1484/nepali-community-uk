@@ -15,7 +15,15 @@ import { NepaliBoyAvatar } from "./NepaliBoyAvatar";
  * to the hand-drawn SVG if the file ever goes missing, so a renamed asset
  * can't leave a broken image on every page.
  */
-export function ChatAvatar({ className, px }: { className?: string; px: number }) {
+export function ChatAvatar({
+  src,
+  className,
+  px,
+}: {
+  src: string;
+  className?: string;
+  px: number;
+}) {
   const [failed, setFailed] = useState(false);
 
   if (failed) return <NepaliBoyAvatar className={className} />;
@@ -25,7 +33,7 @@ export function ChatAvatar({ className, px }: { className?: string; px: number }
       className={cn("inline-block overflow-hidden rounded-full bg-[#f4ede3]", className)}
     >
       <Image
-        src="/images/chat/assistant.png"
+        src={src}
         alt="Nepali Community UK assistant"
         width={px}
         height={px}

@@ -1,6 +1,7 @@
 import "server-only";
 import { AnthropicProvider } from "./anthropic-provider";
 import { OpenAIProvider } from "./openai-provider";
+import { GeminiProvider } from "./gemini-provider";
 import type { AIProvider } from "./types";
 
 let cachedProvider: AIProvider | null = null;
@@ -16,13 +17,15 @@ export function getAIProvider(): AIProvider {
   if (cachedProvider) return cachedProvider;
 
   const providerName = process.env.AI_PROVIDER;
-  if (providerName === "anthropic") {
+  if (providerName === "gemini") {
+    cachedProvider = new GeminiProvider();
+  } else if (providerName === "anthropic") {
     cachedProvider = new AnthropicProvider();
   } else if (providerName === "openai") {
     cachedProvider = new OpenAIProvider();
   } else {
     throw new Error(
-      `AI_PROVIDER must be "anthropic" or "openai", got: ${providerName ?? "(unset)"}`
+      `AI_PROVIDER must be "gemini", "anthropic" or "openai", got: ${providerName ?? "(unset)"}`
     );
   }
 

@@ -12,6 +12,7 @@ export const IMAGE_SETTINGS = [
   { key: "listing.BUSINESS.image", label: "Business Directory page background", default: "/images/culture/khukuri.webp" },
   { key: "page.news.image", label: "News & Blog page background", default: "/images/culture/stupa-alt.webp" },
   { key: "page.advertise.image", label: "Advertise page background", default: "/images/culture/festival.jpg" },
+  { key: "chat.avatar.image", label: "Chat assistant avatar", default: "/images/chat/assistant.png" },
 ] as const;
 
 export type ImageSettingKey = (typeof IMAGE_SETTINGS)[number]["key"];
