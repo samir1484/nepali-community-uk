@@ -5,8 +5,9 @@ import { db } from "@/lib/db";
 import { Card, CardContent } from "@/components/ui/card";
 import { PageBackground } from "@/components/layout/PageBackground";
 import { getSiteImage } from "@/lib/settings";
-import { ARTICLE_CATEGORY_LABELS } from "@/lib/validation/articles";
+import { ARTICLE_CATEGORY_LABELS, NEWS_CATEGORIES } from "@/lib/validation/articles";
 import { np } from "@/lib/translations";
+import { AdSlot } from "@/components/adverts/AdSlot";
 
 export const metadata: Metadata = {
   title: "Nepali Community News & Blog UK",
@@ -22,7 +23,8 @@ export const metadata: Metadata = {
 
 export default async function NewsPage() {
   const articles = await db.article.findMany({
-    where: { status: "PUBLISHED" },
+    // Immigration/student guides live at /resources, not here.
+    where: { status: "PUBLISHED", category: { in: [...NEWS_CATEGORIES] } },
     orderBy: { publishedAt: "desc" },
   });
 
@@ -77,6 +79,10 @@ export default async function NewsPage() {
             ))}
           </div>
         )}
+
+        <div className="mt-12">
+          <AdSlot placement="NEWS" />
+        </div>
       </div>
     </PageBackground>
   );

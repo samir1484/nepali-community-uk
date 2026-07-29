@@ -11,6 +11,7 @@ export const NAV_LINKS = [
   { href: "/volunteer", label: "Volunteer", labelNp: np.volunteer },
   { href: "/businesses", label: "Businesses", labelNp: np.business },
   { href: "/news", label: "News", labelNp: np.news },
+  { href: "/resources", label: "Help", labelNp: np.resources },
   { href: "/about", label: "About", labelNp: np.about },
   { href: "/contact", label: "Contact", labelNp: np.contact },
 ];

@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { externalUrlSchema } from "@/lib/validation/listings";
 
-export const ARTICLE_CATEGORIES = ["NEWS", "BLOG"] as const;
+export const ARTICLE_CATEGORIES = ["NEWS", "BLOG", "IMMIGRATION", "STUDENT"] as const;
 export const ARTICLE_STATUSES = ["DRAFT", "PUBLISHED"] as const;
 
 export type ArticleCategoryValue = (typeof ARTICLE_CATEGORIES)[number];
@@ -9,7 +9,21 @@ export type ArticleCategoryValue = (typeof ARTICLE_CATEGORIES)[number];
 export const ARTICLE_CATEGORY_LABELS: Record<ArticleCategoryValue, string> = {
   NEWS: "News",
   BLOG: "Blog",
+  IMMIGRATION: "Immigration guide",
+  STUDENT: "Student support",
 };
+
+/**
+ * The two sections articles can appear in. Each category belongs to exactly
+ * one, so a given article is reachable from a single URL — otherwise /news and
+ * /resources would both serve the same slug and compete in search results.
+ */
+export const NEWS_CATEGORIES = ["NEWS", "BLOG"] as const;
+export const RESOURCE_CATEGORIES = ["IMMIGRATION", "STUDENT"] as const;
+
+export function isResourceCategory(category: string): boolean {
+  return (RESOURCE_CATEGORIES as readonly string[]).includes(category);
+}
 
 export const articleSchema = z.object({
   title: z.string().trim().min(3, "Title is required"),

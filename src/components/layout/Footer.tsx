@@ -11,9 +11,10 @@ const COMMUNITY_LINKS = [
   { href: "/volunteer", label: "Volunteer", labelNp: np.volunteer },
   { href: "/businesses", label: "Business Directory", labelNp: np.business },
   { href: "/news", label: "News & Blog", labelNp: np.news },
+  { href: "/resources", label: "Immigration & Student Help", labelNp: np.resources },
 ];
 
-const COMING_SOON = ["Immigration Resources", "Student Support"];
+const COMING_SOON: string[] = [];
 
 export async function Footer() {
   const socialLinks = await db.socialLink.findMany({
@@ -84,14 +85,16 @@ export async function Footer() {
             </ul>
           </div>
 
-          <div>
-            <h3 className="text-sm font-semibold uppercase tracking-wide">Coming soon</h3>
-            <ul className="mt-3 flex flex-wrap gap-x-3 gap-y-1 text-sm text-secondary-foreground/80">
-              {COMING_SOON.map((item) => (
-                <li key={item}>{item}</li>
-              ))}
-            </ul>
-          </div>
+          {COMING_SOON.length > 0 && (
+            <div>
+              <h3 className="text-sm font-semibold uppercase tracking-wide">Coming soon</h3>
+              <ul className="mt-3 flex flex-wrap gap-x-3 gap-y-1 text-sm text-secondary-foreground/80">
+                {COMING_SOON.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
+              </ul>
+            </div>
+          )}
         </div>
 
         {socialLinks.length > 0 && (

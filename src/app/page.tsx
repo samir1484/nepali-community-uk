@@ -7,6 +7,7 @@ import { firstExistingPublicFile } from "@/lib/media";
 import { db } from "@/lib/db";
 import { AnimatedSection, StaggerContainer, StaggerItem } from "@/components/animation/AnimatedSection";
 import { np } from "@/lib/translations";
+import { AdSlot } from "@/components/adverts/AdSlot";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -154,6 +155,10 @@ export default async function Home() {
             browsing and posting.
           </p>
         </div>
+      </section>
+
+      <section className="mx-auto max-w-6xl px-4 py-10">
+        <AdSlot placement="HOMEPAGE" />
       </section>
 
       <CultureShowcase sections={showcaseSections} />

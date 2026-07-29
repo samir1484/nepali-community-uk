@@ -4,10 +4,21 @@ import { Button } from "@/components/ui/button";
 import { ListingCard } from "@/components/listings/ListingCard";
 import { LocationFilter } from "@/components/listings/LocationFilter";
 import { LocationLinks } from "@/components/listings/LocationLinks";
+import { AdSlot } from "@/components/adverts/AdSlot";
+import type { AdPlacementValue } from "@/lib/validation/adverts";
 import { typeLabel, typeToPath, type ListingTypeValue } from "@/lib/validation/listings";
 import { np } from "@/lib/translations";
 import { PageBackground } from "@/components/layout/PageBackground";
 import { getListingBackground } from "@/lib/settings";
+
+/** Volunteer has no ad placement — selling ads against unpaid roles reads badly. */
+const AD_PLACEMENT_FOR_TYPE: Record<ListingTypeValue, AdPlacementValue | null> = {
+  JOB: "JOBS",
+  ROOM: "ROOMS",
+  EVENT: "EVENTS",
+  BUSINESS: "BUSINESSES",
+  VOLUNTEER: null,
+};
 
 const TITLES: Record<ListingTypeValue, { heading: string; headingNp: string; description: string }> = {
   JOB: {
@@ -98,6 +109,12 @@ export async function ListingsPage({
               createdAt={listing.createdAt}
             />
           ))}
+        </div>
+      )}
+
+      {AD_PLACEMENT_FOR_TYPE[type] && (
+        <div className="mt-12">
+          <AdSlot placement={AD_PLACEMENT_FOR_TYPE[type]!} />
         </div>
       )}
 

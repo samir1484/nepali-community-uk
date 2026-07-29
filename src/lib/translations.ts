@@ -11,6 +11,7 @@ export const np = {
   contact: "सम्पर्क",
   founder: "संस्थापक",
   news: "समाचार",
+  resources: "स्रोत",
   advertise: "विज्ञापन",
 
   // Homepage
@@ -26,5 +27,6 @@ export const np = {
   volunteerHeading: "स्वयंसेवा अवसरहरू",
   businessHeading: "व्यापार निर्देशिका",
   newsHeading: "समाचार तथा ब्लग",
+  resourcesHeading: "स्रोत तथा जानकारी",
   advertiseHeading: "हामीसँग विज्ञापन गर्नुहोस्",
 } as const;

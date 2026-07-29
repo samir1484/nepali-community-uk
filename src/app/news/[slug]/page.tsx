@@ -8,7 +8,7 @@ import { PageBackground } from "@/components/layout/PageBackground";
 import { getSiteImage } from "@/lib/settings";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { SITE_NAME, DEFAULT_OG_IMAGE, absoluteUrl } from "@/lib/seo";
-import { ARTICLE_CATEGORY_LABELS } from "@/lib/validation/articles";
+import { ARTICLE_CATEGORY_LABELS, isResourceCategory } from "@/lib/validation/articles";
 
 async function getArticle(slug: string) {
   return db.article.findUnique({
@@ -25,7 +25,7 @@ export async function generateMetadata({
   const { slug } = await params;
   const article = await getArticle(slug);
 
-  if (!article || article.status !== "PUBLISHED") {
+  if (!article || article.status !== "PUBLISHED" || isResourceCategory(article.category)) {
     return { title: "Article", robots: { index: false, follow: false } };
   }
 
@@ -56,7 +56,9 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
   const { slug } = await params;
   const article = await getArticle(slug);
 
-  if (!article || article.status !== "PUBLISHED") notFound();
+  // Resource guides belong to /resources, so serving them here too would put
+  // the same content on two URLs.
+  if (!article || article.status !== "PUBLISHED" || isResourceCategory(article.category)) notFound();
 
   const backgroundImage = await getSiteImage("page.news.image", "/images/culture/stupa-alt.webp");
 

@@ -9,6 +9,7 @@ import {
   listingBaseSchema,
   detailsSchemaFor,
   typeToPath,
+  normaliseWhatsapp,
   type ListingTypeValue,
 } from "@/lib/validation/listings";
 
@@ -71,6 +72,7 @@ export async function createListing(
     description: formData.get("description"),
     location: formData.get("location"),
     externalUrl: formData.get("externalUrl"),
+    whatsapp: formData.get("whatsapp"),
   });
   if (!base.success) {
     return {
@@ -103,6 +105,8 @@ export async function createListing(
       details: detailsParsed.data,
       images,
       externalUrl: base.data.externalUrl || null,
+      // Stored normalised so the wa.me link is built once, not on every render.
+      whatsapp: base.data.whatsapp ? normaliseWhatsapp(base.data.whatsapp) : null,
       status,
       authorId: session.user.id,
     },

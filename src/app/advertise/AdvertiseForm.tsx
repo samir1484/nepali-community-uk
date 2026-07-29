@@ -10,7 +10,18 @@ import { Button } from "@/components/ui/button";
 
 const initialState: AdvertiseActionState = { success: false, message: "" };
 
-export function AdvertiseForm() {
+/**
+ * The message box is controlled by the parent so choosing an option above can
+ * prefill it. Doing that with an effect here instead would mean writing state
+ * during render, which React rightly warns about.
+ */
+export function AdvertiseForm({
+  message,
+  onMessageChange,
+}: {
+  message: string;
+  onMessageChange: (value: string) => void;
+}) {
   const [state, formAction, isPending] = useActionState(sendAdvertiseEnquiry, initialState);
 
   useEffect(() => {
@@ -63,7 +74,14 @@ export function AdvertiseForm() {
 
       <div className="space-y-2">
         <Label htmlFor="message">What would you like to promote?</Label>
-        <Textarea id="message" name="message" rows={5} required />
+        <Textarea
+          id="message"
+          name="message"
+          rows={5}
+          value={message}
+          onChange={(e) => onMessageChange(e.target.value)}
+          required
+        />
         <FieldError errors={state.fieldErrors?.message} />
       </div>
 

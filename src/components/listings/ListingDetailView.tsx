@@ -66,6 +66,24 @@ export async function ListingDetailView({ type, id }: { type: ListingTypeValue; 
         />
       )}
 
+      {listing.whatsapp && (
+        <Button
+          className="mt-4 ml-2 bg-[#25D366] text-white hover:bg-[#25D366]/85"
+          nativeButton={false}
+          render={
+            <a
+              href={`https://wa.me/${listing.whatsapp}?text=${encodeURIComponent(
+                `Hi, I saw your listing "${listing.title}" on Nepali Community UK.`
+              )}`}
+              target="_blank"
+              rel="noopener noreferrer nofollow"
+            >
+              Message on WhatsApp
+            </a>
+          }
+        />
+      )}
+
       {listing.externalUrl && (
         <Button
           className="mt-4 ml-2"

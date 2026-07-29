@@ -22,12 +22,39 @@ export const externalUrlSchema = z
   .optional()
   .or(z.literal(""));
 
+/**
+ * Turns what someone actually types into the digits wa.me needs: strips spaces,
+ * brackets and dashes, converts a leading 0 to the UK country code, and drops a
+ * leading + or 00. Returns null when it can't produce something plausible, so a
+ * malformed number becomes "no WhatsApp" rather than a dead link.
+ */
+export function normaliseWhatsapp(input: string): string | null {
+  const trimmed = input.trim();
+  if (!trimmed) return null;
+
+  let digits = trimmed.replace(/[\s()\-.]/g, "");
+  if (digits.startsWith("+")) digits = digits.slice(1);
+  else if (digits.startsWith("00")) digits = digits.slice(2);
+  else if (digits.startsWith("0")) digits = `44${digits.slice(1)}`;
+
+  if (!/^\d{8,15}$/.test(digits)) return null;
+  return digits;
+}
+
+export const whatsappSchema = z
+  .string()
+  .trim()
+  .refine((v) => v === "" || normaliseWhatsapp(v) !== null, "Enter a valid phone number")
+  .optional()
+  .or(z.literal(""));
+
 export const listingBaseSchema = z.object({
   type: z.enum(LISTING_TYPES),
   title: z.string().trim().min(3, "Title is required"),
   description: z.string().trim().min(20, "Description must be at least 20 characters"),
   location: z.string().trim().min(2, "Location is required"),
   externalUrl: externalUrlSchema,
+  whatsapp: whatsappSchema,
 });
 
 export const jobDetailsSchema = z.object({

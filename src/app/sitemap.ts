@@ -3,6 +3,7 @@ import { db } from "@/lib/db";
 import { SITE_URL } from "@/lib/seo";
 import { typeToPath, LISTING_TYPES } from "@/lib/validation/listings";
 import { UK_LOCATIONS } from "@/lib/locations";
+import { isResourceCategory } from "@/lib/validation/articles";
 
 export const revalidate = 3600;
 
@@ -14,6 +15,7 @@ const STATIC_ROUTES = [
   { path: "/businesses", priority: 0.9, changeFrequency: "weekly" as const },
   { path: "/volunteer", priority: 0.8, changeFrequency: "weekly" as const },
   { path: "/news", priority: 0.9, changeFrequency: "daily" as const },
+  { path: "/resources", priority: 0.9, changeFrequency: "weekly" as const },
   { path: "/advertise", priority: 0.7, changeFrequency: "monthly" as const },
   { path: "/games/bagh-chal", priority: 0.7, changeFrequency: "weekly" as const },
   { path: "/about", priority: 0.7, changeFrequency: "monthly" as const },
@@ -54,12 +56,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   try {
     const articles = await db.article.findMany({
       where: { status: "PUBLISHED" },
-      select: { slug: true, updatedAt: true },
+      select: { slug: true, updatedAt: true, category: true },
       orderBy: { publishedAt: "desc" },
       take: 1000,
     });
+    // Each article lives under exactly one section, matching the guards on the
+    // two detail routes — listing the wrong prefix would submit a 404.
     articleEntries = articles.map((article) => ({
-      url: `${SITE_URL}/news/${article.slug}`,
+      url: `${SITE_URL}/${isResourceCategory(article.category) ? "resources" : "news"}/${article.slug}`,
       lastModified: article.updatedAt,
       changeFrequency: "monthly" as const,
       priority: 0.8,

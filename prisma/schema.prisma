@@ -163,6 +163,7 @@ model Listing {
   details     Json             @default("{}")
   images      String[]         @default([])
   externalUrl String?
+  whatsapp    String?
   authorId    String
   createdAt   DateTime         @default(now())
   updatedAt   DateTime         @updatedAt
@@ -196,6 +197,34 @@ enum ArticleStatus {
 enum ArticleCategory {
   NEWS
   BLOG
+  IMMIGRATION
+  STUDENT
+}
+
+/** Where an advert block renders. Adding a value here needs a matching <AdSlot> on that page. */
+enum AdPlacement {
+  HOMEPAGE
+  JOBS
+  ROOMS
+  EVENTS
+  BUSINESSES
+  NEWS
+}
+
+model Advert {
+  id          String      @id @default(cuid())
+  placement   AdPlacement
+  title       String
+  body        String?
+  imageUrl    String?
+  linkUrl     String?
+  isActive    Boolean     @default(true)
+  order       Int         @default(0)
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  @@index([placement, isActive, order])
+  @@map("adverts")
 }
 
 model Article {

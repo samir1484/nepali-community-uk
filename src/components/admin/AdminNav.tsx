@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, GalleryHorizontal, ClipboardList, Newspaper, Users, MessageSquare, Settings } from "lucide-react";
+import { LayoutDashboard, GalleryHorizontal, ClipboardList, Newspaper, Megaphone, Users, MessageSquare, Settings } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const LINKS = [
@@ -10,6 +10,7 @@ const LINKS = [
   { href: "/admin/sections", label: "Homepage Sections", icon: GalleryHorizontal, exact: false },
   { href: "/admin/listings", label: "Listings", icon: ClipboardList, exact: false },
   { href: "/admin/news", label: "News & Blog", icon: Newspaper, exact: false },
+  { href: "/admin/adverts", label: "Adverts", icon: Megaphone, exact: false },
   { href: "/admin/messages", label: "Messages", icon: MessageSquare, exact: false },
   { href: "/admin/users", label: "Users", icon: Users, exact: false },
   { href: "/admin/settings", label: "Settings", icon: Settings, exact: false },

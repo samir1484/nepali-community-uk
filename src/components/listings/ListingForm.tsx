@@ -116,6 +116,19 @@ export function ListingForm({ type }: { type: ListingTypeValue }) {
         <FieldError errors={state.fieldErrors?.externalUrl} />
       </div>
 
+      {(type === "JOB" || type === "ROOM") && (
+        <div className="space-y-2">
+          <Label htmlFor="whatsapp">WhatsApp number (optional)</Label>
+          <Input id="whatsapp" name="whatsapp" type="tel" placeholder="07700 900123" />
+          <p className="text-xs text-muted-foreground">
+            Adds a &quot;Message on WhatsApp&quot; button so people can reach you directly.
+            Only add it if you&apos;re happy for this number to be public — anyone viewing
+            the listing will see it.
+          </p>
+          <FieldError errors={state.fieldErrors?.whatsapp} />
+        </div>
+      )}
+
       {type === "JOB" && (
         <>
           <div className="space-y-2">
