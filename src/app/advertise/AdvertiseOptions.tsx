@@ -28,34 +28,69 @@ const OPTIONS = [
   },
 ];
 
+/** "A", "A and B", "A, B and C" — reads like a person wrote it. */
+function listToSentence(items: string[]): string {
+  if (items.length <= 1) return items[0] ?? "";
+  return `${items.slice(0, -1).join(", ")} and ${items[items.length - 1]}`;
+}
+
 /**
- * The option cards used to be decorative. Selecting one now carries the choice
- * into the enquiry form and scrolls down to it, so the person doesn't have to
- * re-describe what they just clicked.
+ * The option cards used to be decorative. Selecting them now carries the
+ * choices into the enquiry form and scrolls down to it, so the person doesn't
+ * have to re-describe what they just clicked.
+ *
+ * Several options can be picked at once — people commonly want, say, a featured
+ * listing *and* event promotion, and forcing one choice made them re-type the
+ * rest.
  */
 export function AdvertiseOptions() {
-  const [selected, setSelected] = useState<string | null>(null);
+  const [selected, setSelected] = useState<string[]>([]);
   const [message, setMessage] = useState("");
+  // Once someone edits the box themselves, their words win and the generated
+  // summary stops rewriting it.
+  const [messageEdited, setMessageEdited] = useState(false);
 
-  function choose(title: string) {
-    setSelected(title);
-    // Only prefill an untouched box — never overwrite what someone has typed.
-    if (!message.trim()) setMessage(`I'm interested in: ${title}.\n\n`);
-    document.getElementById("advertise-form")?.scrollIntoView({ behavior: "smooth", block: "start" });
+  function toggle(title: string) {
+    const next = selected.includes(title)
+      ? selected.filter((t) => t !== title)
+      : [...selected, title];
+    setSelected(next);
+
+    if (!messageEdited) {
+      setMessage(next.length === 0 ? "" : `I'm interested in: ${listToSentence(next)}.\n\n`);
+    }
+
+    // Only jump to the form on the first pick — scrolling away on every tap
+    // would make choosing a second option annoying.
+    if (selected.length === 0 && next.length === 1) {
+      document.getElementById("advertise-form")?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  }
+
+  function handleMessageChange(value: string) {
+    setMessageEdited(true);
+    setMessage(value);
   }
 
   return (
     <>
       <h2 className="mt-10 text-xl font-semibold text-foreground">Ways to work with us</h2>
       <p className="mt-1 text-sm text-muted-foreground">
-        Pick the one closest to what you have in mind — it&apos;ll fill in the form below.
+        Pick as many as you like — they&apos;ll fill in the form below. Tap again to
+        remove one.
       </p>
 
       <div className="mt-4 grid gap-4 sm:grid-cols-2">
         {OPTIONS.map((option) => {
-          const isSelected = selected === option.title;
+          const isSelected = selected.includes(option.title);
           return (
-            <button key={option.title} type="button" onClick={() => choose(option.title)} className="text-left">
+            <button
+              key={option.title}
+              type="button"
+              onClick={() => toggle(option.title)}
+              aria-pressed={isSelected}
+              className="text-left"
+            >
               <Card
                 className={cn(
                   "h-full transition-all duration-300 hover:border-primary active:scale-[0.98]",
@@ -65,11 +100,17 @@ export function AdvertiseOptions() {
                 <CardContent className="pt-6">
                   <div className="flex items-start justify-between gap-2">
                     <h3 className="font-semibold text-foreground">{option.title}</h3>
-                    {isSelected && (
-                      <span className="shrink-0 rounded-full bg-primary px-2 py-0.5 text-[11px] font-medium text-primary-foreground">
-                        Selected
-                      </span>
-                    )}
+                    <span
+                      className={cn(
+                        "flex size-5 shrink-0 items-center justify-center rounded-full border text-[11px] font-bold",
+                        isSelected
+                          ? "border-primary bg-primary text-primary-foreground"
+                          : "border-muted-foreground/40 text-transparent"
+                      )}
+                      aria-hidden="true"
+                    >
+                      ✓
+                    </span>
                   </div>
                   <p className="mt-2 text-sm text-muted-foreground">{option.description}</p>
                 </CardContent>
@@ -78,6 +119,22 @@ export function AdvertiseOptions() {
           );
         })}
       </div>
+
+      {selected.length > 0 && (
+        <p className="mt-3 text-sm text-muted-foreground">
+          {selected.length} selected —{" "}
+          <button
+            type="button"
+            onClick={() => {
+              setSelected([]);
+              if (!messageEdited) setMessage("");
+            }}
+            className="text-primary underline underline-offset-4"
+          >
+            clear all
+          </button>
+        </p>
+      )}
 
       <p className="mt-6 text-sm text-muted-foreground">
         Pricing depends on what you need and how long you&apos;d like to run it — budgets
@@ -90,7 +147,7 @@ export function AdvertiseOptions() {
         Get in touch
       </h2>
       <div className="mt-4">
-        <AdvertiseForm message={message} onMessageChange={setMessage} />
+        <AdvertiseForm message={message} onMessageChange={handleMessageChange} />
       </div>
     </>
   );
