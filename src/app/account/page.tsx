@@ -5,6 +5,7 @@ import { db } from "@/lib/db";
 import { ChangePasswordForm } from "@/components/account/ChangePasswordForm";
 import { ProfilePhotoUploader } from "@/components/account/ProfilePhotoUploader";
 import { ProfileDetailsForm } from "@/components/account/ProfileDetailsForm";
+import { LogoutButton } from "@/components/account/LogoutButton";
 import { PageBackground } from "@/components/layout/PageBackground";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
@@ -61,6 +62,16 @@ export default async function AccountPage() {
             <ChangePasswordForm />
           </TabsContent>
         </Tabs>
+
+        <div className="mt-10 border-t pt-6">
+          <h2 className="font-semibold text-foreground">Sign out</h2>
+          <p className="mt-1 text-sm text-muted-foreground">
+            You&apos;ll need your email and password to log back in.
+          </p>
+          <div className="mt-3">
+            <LogoutButton />
+          </div>
+        </div>
       </div>
     </PageBackground>
   );

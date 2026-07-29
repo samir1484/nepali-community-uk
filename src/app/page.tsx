@@ -9,12 +9,16 @@ import { AnimatedSection, StaggerContainer, StaggerItem } from "@/components/ani
 import { np } from "@/lib/translations";
 import { AdSlot } from "@/components/adverts/AdSlot";
 import type { Metadata } from "next";
+import { auth } from "@/auth";
 
 export const metadata: Metadata = {
   alternates: { canonical: "/" },
 };
 
 export default async function Home() {
+  const session = await auth();
+  const isLoggedIn = Boolean(session?.user);
+
   const allSections = await db.homeSection.findMany({
     where: { isActive: true },
     orderBy: { order: "asc" },
@@ -76,11 +80,21 @@ export default async function Home() {
               the Nepali community across the United Kingdom.
             </p>
             <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row sm:justify-start">
-              <Button
-                size="lg"
-                nativeButton={false}
-                render={<Link href="/register">Join the community</Link>}
-              />
+              {/* Members are already in — showing them a sign-up call to action
+                  is noise, so they get a route into the site instead. */}
+              {isLoggedIn ? (
+                <Button
+                  size="lg"
+                  nativeButton={false}
+                  render={<Link href="/jobs">Browse listings</Link>}
+                />
+              ) : (
+                <Button
+                  size="lg"
+                  nativeButton={false}
+                  render={<Link href="/register">Join the community</Link>}
+                />
+              )}
               <Button
                 size="lg"
                 variant="outline"
@@ -151,8 +165,9 @@ export default async function Home() {
             })}
           </StaggerContainer>
           <p className="mt-6 text-center text-sm text-muted-foreground">
-            Jobs, rooms, events, and volunteering are live now — register to start
-            browsing and posting.
+            {isLoggedIn
+              ? "Jobs, rooms, events and volunteering are all live — post yours any time from the section you need."
+              : "Jobs, rooms, events, and volunteering are live now — register to start browsing and posting."}
           </p>
         </div>
       </section>

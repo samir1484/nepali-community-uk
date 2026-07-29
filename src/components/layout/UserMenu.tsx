@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useSession, signOut } from "next-auth/react";
+import { useSession } from "next-auth/react";
 import { Button } from "@/components/ui/button";
 
 export function UserMenu() {
@@ -20,15 +20,14 @@ export function UserMenu() {
     );
   }
 
+  // Logging out lives on the My account page rather than the header — it keeps
+  // the nav lighter, and it's a deliberate action rather than a one-tap slip.
   return (
     <div className="flex items-center gap-3">
       <span className="hidden text-sm text-muted-foreground sm:inline">
         {session.user?.name}
       </span>
-      <Button variant="ghost" nativeButton={false} render={<Link href="/account">My account</Link>} />
-      <Button variant="outline" onClick={() => signOut({ callbackUrl: "/" })}>
-        Log out
-      </Button>
+      <Button variant="outline" nativeButton={false} render={<Link href="/account">My account</Link>} />
     </div>
   );
 }
