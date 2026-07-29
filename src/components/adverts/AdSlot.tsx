@@ -14,7 +14,8 @@ import type { AdPlacementValue } from "@/lib/validation/adverts";
 export async function AdSlot({ placement }: { placement: AdPlacementValue }) {
   const adverts = await db.advert
     .findMany({
-      where: { placement, isActive: true },
+      // `has` matches adverts whose placement list includes this page.
+      where: { placements: { has: placement }, isActive: true },
       orderBy: { order: "asc" },
       take: 3,
     })

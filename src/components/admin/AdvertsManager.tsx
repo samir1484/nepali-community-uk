@@ -17,17 +17,10 @@ import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { ImageUploader } from "@/components/admin/ImageUploader";
 
 const emptyDraft = {
-  placement: "HOMEPAGE" as (typeof AD_PLACEMENTS)[number],
+  placements: ["HOMEPAGE"] as (typeof AD_PLACEMENTS)[number][],
   title: "",
   body: "",
   imageUrl: "",
@@ -40,7 +33,7 @@ type Draft = typeof emptyDraft;
 
 function toDraft(advert: Advert): Draft {
   return {
-    placement: advert.placement,
+    placements: advert.placements,
     title: advert.title,
     body: advert.body ?? "",
     imageUrl: advert.imageUrl ?? "",
@@ -58,10 +51,20 @@ export function AdvertsManager({ adverts }: { adverts: Advert[] }) {
   const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
   const [isPending, startTransition] = useTransition();
 
+  function togglePlacement(placement: (typeof AD_PLACEMENTS)[number], checked: boolean) {
+    setDraft((d) => ({
+      ...d,
+      placements: checked
+        ? [...d.placements, placement]
+        : d.placements.filter((p) => p !== placement),
+    }));
+  }
+
   function submit() {
     startTransition(async () => {
       const fd = new FormData();
-      fd.set("placement", draft.placement);
+      // append, not set — FormData.getAll() on the server needs every value.
+      for (const placement of draft.placements) fd.append("placements", placement);
       fd.set("title", draft.title);
       fd.set("body", draft.body);
       fd.set("imageUrl", draft.imageUrl);
@@ -118,24 +121,23 @@ export function AdvertsManager({ adverts }: { adverts: Advert[] }) {
             </h2>
 
             <div className="space-y-2">
-              <Label htmlFor="placement">Where it shows</Label>
-              <Select
-                value={draft.placement}
-                onValueChange={(v) => setDraft((d) => ({ ...d, placement: v as Draft["placement"] }))}
-              >
-                <SelectTrigger id="placement" className="w-full">
-                  <SelectValue>
-                    {(v) => AD_PLACEMENT_LABELS[v as (typeof AD_PLACEMENTS)[number]]}
-                  </SelectValue>
-                </SelectTrigger>
-                <SelectContent>
-                  {AD_PLACEMENTS.map((p) => (
-                    <SelectItem key={p} value={p}>
-                      {AD_PLACEMENT_LABELS[p]}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <Label>Where it shows</Label>
+              <p className="text-xs text-muted-foreground">
+                Tick every page this advert should appear on — one advert can run in
+                several places.
+              </p>
+              <div className="grid gap-2 sm:grid-cols-2">
+                {AD_PLACEMENTS.map((p) => (
+                  <label key={p} className="flex items-center gap-2 text-sm text-foreground">
+                    <Checkbox
+                      checked={draft.placements.includes(p)}
+                      onCheckedChange={(checked) => togglePlacement(p, checked === true)}
+                    />
+                    {AD_PLACEMENT_LABELS[p]}
+                  </label>
+                ))}
+              </div>
+              <FieldError errors={fieldErrors.placements} />
             </div>
 
             <div className="space-y-2">
@@ -238,7 +240,11 @@ export function AdvertsManager({ adverts }: { adverts: Advert[] }) {
                   <Badge variant={advert.isActive ? "default" : "secondary"}>
                     {advert.isActive ? "Live" : "Paused"}
                   </Badge>
-                  <Badge variant="outline">{AD_PLACEMENT_LABELS[advert.placement]}</Badge>
+                  {advert.placements.map((p) => (
+                    <Badge key={p} variant="outline">
+                      {AD_PLACEMENT_LABELS[p]}
+                    </Badge>
+                  ))}
                   <span className="font-medium text-foreground">{advert.title}</span>
                 </div>
                 {advert.body && (

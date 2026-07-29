@@ -14,7 +14,7 @@ export type AdvertActionState = {
 
 function parseFormData(formData: FormData) {
   return {
-    placement: formData.get("placement"),
+    placements: formData.getAll("placements"),
     title: formData.get("title"),
     body: formData.get("body"),
     imageUrl: formData.get("imageUrl"),
@@ -48,7 +48,7 @@ export async function createAdvert(
 
   await db.advert.create({
     data: {
-      placement: parsed.data.placement,
+      placements: parsed.data.placements,
       title: parsed.data.title,
       body: parsed.data.body || null,
       imageUrl: parsed.data.imageUrl || null,
@@ -81,7 +81,7 @@ export async function updateAdvert(
   await db.advert.update({
     where: { id },
     data: {
-      placement: parsed.data.placement,
+      placements: parsed.data.placements,
       title: parsed.data.title,
       body: parsed.data.body || null,
       imageUrl: parsed.data.imageUrl || null,

@@ -2,8 +2,10 @@ import { db } from "@/lib/db";
 import { AdvertsManager } from "@/components/admin/AdvertsManager";
 
 export default async function AdminAdvertsPage() {
+  // Can't sort by placements now it's a list, so newest-first within each
+  // manual order position, which is what you want when reviewing them anyway.
   const adverts = await db.advert.findMany({
-    orderBy: [{ placement: "asc" }, { order: "asc" }],
+    orderBy: [{ order: "asc" }, { createdAt: "desc" }],
   });
 
   return (

@@ -212,18 +212,19 @@ enum AdPlacement {
 }
 
 model Advert {
-  id          String      @id @default(cuid())
-  placement   AdPlacement
+  id          String        @id @default(cuid())
+  /** One advert can run in several places at once, so this is a list. */
+  placements  AdPlacement[]
   title       String
   body        String?
   imageUrl    String?
   linkUrl     String?
-  isActive    Boolean     @default(true)
-  order       Int         @default(0)
-  createdAt   DateTime    @default(now())
-  updatedAt   DateTime    @updatedAt
+  isActive    Boolean       @default(true)
+  order       Int           @default(0)
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
 
-  @@index([placement, isActive, order])
+  @@index([isActive, order])
   @@map("adverts")
 }
 

@@ -14,7 +14,9 @@ export const AD_PLACEMENT_LABELS: Record<AdPlacementValue, string> = {
 };
 
 export const advertSchema = z.object({
-  placement: z.enum(AD_PLACEMENTS),
+  placements: z
+    .array(z.enum(AD_PLACEMENTS))
+    .min(1, "Choose at least one place for this advert to show"),
   title: z.string().trim().min(2, "Title is required"),
   body: z.string().trim().max(300, "Keep it under 300 characters").optional().or(z.literal("")),
   imageUrl: z.string().trim().optional().or(z.literal("")),
