@@ -53,6 +53,11 @@ export function LoginForm() {
           The password you chose when you registered on this website — not your
           email or Google password.
         </p>
+        <p className="text-sm">
+          <Link href="/forgot-password" className="text-primary underline underline-offset-4">
+            Forgot your password?
+          </Link>
+        </p>
       </div>
       <Button type="submit" className="w-full" disabled={isPending}>
         {isPending ? "Logging in..." : "Log in"}

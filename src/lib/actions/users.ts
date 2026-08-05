@@ -24,3 +24,38 @@ export async function updateUserRole(
   revalidatePath("/admin/users");
   return { success: true, message: "Role updated." };
 }
+
+export async function setUserBlocked(
+  userId: string,
+  blocked: boolean
+): Promise<{ success: boolean; message: string }> {
+  const session = await requireAdmin();
+
+  // Blocking yourself would lock you out of the admin area with no way back in.
+  if (session.user.id === userId) {
+    return { success: false, message: "You can't block your own account." };
+  }
+
+  const target = await db.user.findUnique({
+    where: { id: userId },
+    select: { role: true, name: true },
+  });
+  if (!target) return { success: false, message: "User not found." };
+
+  // Staff have to be demoted first, so a block can't take out a colleague in
+  // a single click.
+  if (blocked && (target.role === "ADMIN" || target.role === "MODERATOR")) {
+    return { success: false, message: "Change their role to User before blocking them." };
+  }
+
+  await db.user.update({
+    where: { id: userId },
+    data: { isBlocked: blocked, blockedAt: blocked ? new Date() : null },
+  });
+
+  revalidatePath("/admin/users");
+  return {
+    success: true,
+    message: blocked ? `${target.name} has been blocked.` : `${target.name} has been unblocked.`,
+  };
+}

@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { auth } from "@/auth";
 import { db } from "@/lib/db";
-import { requireAdmin, NotAuthorizedError } from "@/lib/auth/rbac";
+import { requireAdmin, requireActiveUser } from "@/lib/auth/rbac";
 import { notifyMatchingUsers } from "@/lib/notifications/matchInterests";
 import {
   listingBaseSchema,
@@ -19,10 +19,10 @@ export type ListingActionState = {
   fieldErrors?: Record<string, string[]>;
 };
 
+// Blocked members must not be able to post, so this goes through the shared
+// database-backed check rather than just reading the session.
 async function requireUser() {
-  const session = await auth();
-  if (!session?.user) throw new NotAuthorizedError();
-  return session;
+  return requireActiveUser();
 }
 
 function extractDetails(type: ListingTypeValue, formData: FormData): Record<string, unknown> {

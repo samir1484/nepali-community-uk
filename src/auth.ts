@@ -22,6 +22,9 @@ const providers: Provider[] = [
         where: { email: parsed.data.email },
       });
       if (!user?.passwordHash) return null;
+      // Blocked accounts can't sign in at all. Checked before the password
+      // comparison so a blocked user learns nothing from the response timing.
+      if (user.isBlocked) return null;
 
       const valid = await bcrypt.compare(parsed.data.password, user.passwordHash);
       if (!valid) return null;

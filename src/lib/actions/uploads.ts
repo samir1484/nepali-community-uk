@@ -1,7 +1,7 @@
 "use server";
 
 import { auth } from "@/auth";
-import { requireAdmin, NotAuthorizedError } from "@/lib/auth/rbac";
+import { requireAdmin, requireActiveUser } from "@/lib/auth/rbac";
 import { uploadImage, validateImageUpload } from "@/lib/storage";
 
 export type UploadActionState = {
@@ -37,7 +37,7 @@ export async function uploadSectionImage(formData: FormData): Promise<UploadActi
 
 /** Any logged-in user can upload a photo to attach to their own listing. */
 export async function uploadUserImage(formData: FormData): Promise<UploadActionState> {
-  const session = await auth();
-  if (!session?.user) throw new NotAuthorizedError();
+  // Blocked members shouldn't be able to push files into storage either.
+  await requireActiveUser();
   return uploadFromFormData(formData);
 }
